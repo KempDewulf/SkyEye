@@ -54,6 +54,78 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+fun MyScaffold() {
+    Scaffold(
+        bottomBar = {
+            BottomAppBarExample()
+        }
+    ) { paddingValues ->
+        // Use the contentPadding parameter to apply padding to the content
+        MapView(
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
+}
+
+@Composable
+fun BottomAppBarExample() {
+    BottomAppBar {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconWithLabel(
+                onClick = { /* show settings page */ },
+                iconRes = R.drawable.settings,
+                label = "Settings"
+            )
+            IconWithLabel(
+                onClick = { /* show weather modal */ },
+                iconRes = R.drawable.weather,
+                label = "Weather"
+            )
+            IconWithLabel(
+                onClick = { /* show ar camera page */ },
+                iconRes = R.drawable.camera,
+                label = "AR Camera"
+            )
+            IconWithLabel(
+                onClick = { /* show map type modal */ },
+                iconRes = R.drawable.map,
+                label = "Map Type"
+            )
+            IconWithLabel(
+                onClick = { /* show filters modal */ },
+                iconRes = R.drawable.filter,
+                label = "Filters"
+            )
+        }
+    }
+}
+
+@Composable
+fun IconWithLabel(onClick: () -> Unit, @DrawableRes iconRes: Int, label: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.clickable { onClick() }
+    ) {
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null, // Set to null as the label serves as content description
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium
+        )
+    }
+}
+
+@Composable
 fun MapView(modifier: Modifier = Modifier) {
     AndroidView(
         modifier = modifier,
