@@ -24,7 +24,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -57,7 +60,7 @@ class MainActivity : ComponentActivity() {
 fun MyScaffold() {
     Scaffold(
         bottomBar = {
-            BottomAppBarExample()
+            BottomAppBar()
         }
     ) { paddingValues ->
         // Use the contentPadding parameter to apply padding to the content
@@ -68,38 +71,39 @@ fun MyScaffold() {
 }
 
 @Composable
-fun BottomAppBarExample() {
-    BottomAppBar {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconWithLabel(
-                onClick = { /* show settings page */ },
-                iconRes = R.drawable.settings,
-                label = "Settings"
-            )
-            IconWithLabel(
-                onClick = { /* show weather modal */ },
-                iconRes = R.drawable.weather,
-                label = "Weather"
-            )
-            IconWithLabel(
-                onClick = { /* show ar camera page */ },
-                iconRes = R.drawable.camera,
-                label = "AR Camera"
-            )
-            IconWithLabel(
-                onClick = { /* show map type modal */ },
-                iconRes = R.drawable.map,
-                label = "Map Type"
-            )
-            IconWithLabel(
-                onClick = { /* show filters modal */ },
-                iconRes = R.drawable.filter,
-                label = "Filters"
+fun TopBar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(Icons.Rounded.Menu, contentDescription = "menu", modifier = Modifier.size(32.dp))
+        }
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(Icons.Rounded.AccountCircle, contentDescription = "avatar", modifier = Modifier.size(36.dp))
+        }
+    }
+}
+
+@Composable
+fun BottomAppBar() {
+    var selectedItem by remember { mutableIntStateOf(0) }
+    val items = listOf(
+        Pair(R.drawable.settings, "Settings"),
+        Pair(R.drawable.weather, "Weather"),
+        Pair(R.drawable.camera, "Camera"),
+        Pair(R.drawable.map, "Map Type"),
+        Pair(R.drawable.filter, "Filters")
+    )
+    NavigationBar {
+        items.forEachIndexed { index, (icon, label) ->
+            NavigationBarItem(
+                icon = { Icon(painterResource(id = icon), contentDescription = label) },
+                label = { Text(label) },
+                selected = selectedItem == index,
+                onClick = { selectedItem = index }
             )
         }
     }
@@ -150,3 +154,4 @@ fun MapView(modifier: Modifier = Modifier) {
         }
     )
 }
+
