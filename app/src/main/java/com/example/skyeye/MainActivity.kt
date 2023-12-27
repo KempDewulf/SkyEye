@@ -1,25 +1,25 @@
 package com.example.skyeye
 
+import android.content.res.Resources.Theme
 import android.os.Bundle
+import android.view.Gravity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,9 +29,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.skyeye.ui.theme.SkyEyeTheme
@@ -49,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MyScaffold()
+                    Homescreen()
                 }
             }
         }
@@ -57,8 +55,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyScaffold() {
+fun Homescreen() {
     Scaffold(
+        topBar = {
+            TopBar()
+        },
         bottomBar = {
             BottomAppBar()
         }
@@ -110,26 +111,6 @@ fun BottomAppBar() {
 }
 
 @Composable
-fun IconWithLabel(onClick: () -> Unit, @DrawableRes iconRes: Int, label: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.clickable { onClick() }
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = null, // Set to null as the label serves as content description
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelMedium
-        )
-    }
-}
-
-@Composable
 fun MapView(modifier: Modifier = Modifier) {
     AndroidView(
         modifier = modifier,
@@ -142,6 +123,11 @@ fun MapView(modifier: Modifier = Modifier) {
                 // Set the style after mapView was loaded
                 map.setStyle(styleUrl) {
                     map.uiSettings.setAttributionMargins(15, 0, 0, 15)
+                    map.uiSettings.compassGravity = Gravity.BOTTOM or Gravity.START
+                    map.uiSettings.setCompassMargins(40, 0, 0, 40)
+                    map.uiSettings.isAttributionEnabled = false
+                    map.uiSettings.isLogoEnabled = false
+                    map.uiSettings.setCompassFadeFacingNorth(false)
                     // Set the map view center
                     map.cameraPosition = CameraPosition.Builder()
                         .target(LatLng(50.5, 4.47))
