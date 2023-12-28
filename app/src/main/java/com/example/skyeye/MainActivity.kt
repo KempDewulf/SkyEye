@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -53,6 +54,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -90,6 +92,7 @@ fun Drawer() {
         drawerState = drawerState,
         gesturesEnabled = false,
         drawerContent = { DrawerContent(drawerState, scope, items) },
+        scrimColor = Color.Black.copy(alpha = 0.8f),
         content = { Homescreen(drawerState, scope) }
     )
 }
@@ -146,23 +149,67 @@ private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope) {
 }
 
 @Composable
+private fun DrawerItem(
+    iconId: Int,
+    label: String,
+    onClick: () -> Unit,
+    bottomPadding: Dp = 0.dp // Default padding is 0.dp
+) {
+    NavigationDrawerItem(
+        icon = {
+            Icon(
+                painterResource(iconId),
+                tint = MaterialTheme.colorScheme.primary,
+                contentDescription = null,
+                modifier = Modifier.size(26.dp)
+            )
+        },
+        label = {
+            Text(
+                label,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        },
+        selected = false,
+        onClick = onClick,
+        modifier = Modifier
+            .padding(NavigationDrawerItemDefaults.ItemPadding)
+            .then(
+                if (bottomPadding > 0.dp) {
+                    Modifier.padding(bottom = bottomPadding)
+                } else {
+                    Modifier
+                }
+            )
+    )
+}
+
+@Composable
 private fun DrawerItems(items: List<Pair<Int, String>>, drawerState: DrawerState, scope: CoroutineScope) {
-    items.forEach { item ->
-        NavigationDrawerItem(
-            icon = { Icon(painterResource(item.first), tint = MaterialTheme.colorScheme.primary, contentDescription = null, modifier = Modifier.size(26.dp)) },
-            label = { Text(item.second, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp, modifier = Modifier.padding(start = 8.dp)) },
-            selected = false,
-            onClick = {
-                scope.launch { drawerState.close() }
-            },
-            modifier = if (item.second == "Settings") {
-                Modifier
-                    .padding(NavigationDrawerItemDefaults.ItemPadding)
-                    .padding(top = 380.dp)
-            } else {
-                Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-            }
-        )
+    Column {
+        // Top items
+        items.filter { it.second != "Settings" }.forEach { item ->
+            DrawerItem(
+                iconId = item.first,
+                label = item.second,
+                onClick = { scope.launch { drawerState.close() } }
+            )
+        }
+
+        // Spacer to separate top and bottom items
+        Spacer(modifier = Modifier.weight(1f))
+
+        // "Settings" item at the bottom with bottom padding
+        items.find { it.second == "Settings" }?.let { settingsItem ->
+            DrawerItem(
+                iconId = settingsItem.first,
+                label = settingsItem.second,
+                onClick = { scope.launch { drawerState.close() } },
+                bottomPadding = 16.dp // Adjust the padding as needed
+            )
+        }
     }
 }
 
