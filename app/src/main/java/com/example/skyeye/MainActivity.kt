@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
                             LoginScreen()
                         }
                         composable("seeAllAirports") {
-                            AirportsScreen()
+                            AirportsScreen(navController)
                         }
                     }
                 }
