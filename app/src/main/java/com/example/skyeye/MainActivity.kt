@@ -94,65 +94,80 @@ fun Drawer() {
         Pair(R.drawable.runway, "See all airports"),
         Pair(R.drawable.settings, "Settings")
     )
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = false,
-        drawerContent = {
-            ModalDrawerSheet(
-                drawerShape = RectangleShape,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(300.dp)
-            ) {
-                Spacer(Modifier.height(12.dp))
-                Row {
-                    IconButton(onClick = { scope.launch { drawerState.close() } }) {
-                        Icon(
-                            Icons.Rounded.ArrowBack,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(30.dp)
-                        )
-                    }
-                    TextButton(onClick = { /*TODO: send to register page*/ }) {
-                        Text(text = "Register", fontSize = 22.sp, modifier = Modifier.padding(start = 35.dp))
-                    }
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 10.dp)
-                    ) {
-                        Text(text = "or", fontSize = 22.sp)
-                    }
-                    TextButton(onClick = { /*TODO: send to log in page*/ }) {
-                        Text(text = "Log in", fontSize = 22.sp)
-                    }
-
-                }
-                Divider(color = MaterialTheme.colorScheme.outlineVariant,thickness = 1.dp, modifier = Modifier.padding(start = 15.dp, end = 15.dp))
-                Spacer(Modifier.height(18.dp))
-                items.forEach { item ->
-                    NavigationDrawerItem(
-                        icon = { Icon(painterResource(item.first), contentDescription = null, modifier = Modifier.size(28.dp)) },
-                        label = { Text(item.second, fontSize = 16.sp) },
-                        selected = false,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                        },
-                        modifier = if (item.second == "Settings") {
-                            Modifier
-                                .padding(NavigationDrawerItemDefaults.ItemPadding)
-                                .padding(top = 380.dp)
-                        } else {
-                            Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                        }
-                    )
-                }
-            }
-        },
-        content = {
-            Homescreen(drawerState, scope)
-        }
+        drawerContent = { DrawerContent(drawerState, scope, items) },
+        content = { Homescreen(drawerState, scope) }
     )
+}
+
+@Composable
+private fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Pair<Int, String>>) {
+    ModalDrawerSheet(
+        drawerShape = RectangleShape,
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(300.dp)
+    ) {
+        DrawerHeader(drawerState, scope)
+        DrawerItems(items, drawerState, scope)
+    }
+}
+
+@Composable
+private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope) {
+    Spacer(Modifier.height(12.dp))
+    Row {
+        IconButton(onClick = { scope.launch { drawerState.close() } }) {
+            Icon(
+                Icons.Rounded.ArrowBack,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(30.dp)
+            )
+        }
+        TextButton(onClick = { /*TODO: send to register page*/ }) {
+            Text(text = "Register", fontSize = 22.sp, modifier = Modifier.padding(start = 35.dp))
+        }
+        Box(
+            modifier = Modifier
+                .padding(vertical = 10.dp)
+        ) {
+            Text(text = "or", fontSize = 22.sp)
+        }
+        TextButton(onClick = { /*TODO: send to log in page*/ }) {
+            Text(text = "Log in", fontSize = 22.sp)
+        }
+    }
+    Divider(
+        color = MaterialTheme.colorScheme.outlineVariant,
+        thickness = 1.dp,
+        modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+    )
+    Spacer(Modifier.height(18.dp))
+}
+
+@Composable
+private fun DrawerItems(items: List<Pair<Int, String>>, drawerState: DrawerState, scope: CoroutineScope) {
+    items.forEach { item ->
+        NavigationDrawerItem(
+            icon = { Icon(painterResource(item.first), contentDescription = null, modifier = Modifier.size(28.dp)) },
+            label = { Text(item.second, fontSize = 16.sp) },
+            selected = false,
+            onClick = {
+                scope.launch { drawerState.close() }
+            },
+            modifier = if (item.second == "Settings") {
+                Modifier
+                    .padding(NavigationDrawerItemDefaults.ItemPadding)
+                    .padding(top = 380.dp)
+            } else {
+                Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            }
+        )
+    }
 }
 
 @Composable
