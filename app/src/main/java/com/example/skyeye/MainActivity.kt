@@ -5,8 +5,8 @@ import android.view.Gravity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -76,22 +76,21 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = "home"
+                        startDestination = "home",
+                        enterTransition = {EnterTransition.None},
+                        exitTransition = {ExitTransition.None}
                     ) {
                         composable("home") {
                             Drawer(navController = navController)
                         }
-                        composable("login", enterTransition = { slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Up,
-                            animationSpec = tween(100),
-                        ) }) {
+                        composable("login") {
                             LoginAndRegisterScreen(navController = navController, false)
                         }
-                        composable("register", enterTransition = { slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Up,
-                            animationSpec = tween(100),
-                        ) }) {
+                        composable("register") {
                             LoginAndRegisterScreen(navController = navController, true)
+                        }
+                        composable("seeAllAirports") {
+                            AirportsScreen(navController)
                         }
                     }
                 }
@@ -105,11 +104,11 @@ fun Drawer(navController: NavController) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val items = listOf(
-        Pair(R.drawable.weather, "Check the weather"),
-        Pair(R.drawable.camera, "Search airplanes with AR"),
-        Pair(R.drawable.airplane, "See all aircraft types"),
-        Pair(R.drawable.runway, "See all airports"),
-        Pair(R.drawable.settings, "Settings")
+        Triple(R.drawable.weather, "Check the weather", "weather"),
+        Triple(R.drawable.camera, "Search airplanes with AR", "camera"),
+        Triple(R.drawable.airplane, "See all aircraft types", "aircraft"),
+        Triple(R.drawable.runway, "See all airports", "seeAllAirports"),
+        Triple(R.drawable.settings, "Settings", "settings")
     )
 
     ModalNavigationDrawer(
@@ -122,7 +121,7 @@ fun Drawer(navController: NavController) {
 }
 
 @Composable
-private fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Pair<Int, String>>, navController: NavController) {
+private fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Triple<Int, String, String>>, navController: NavController) {
     ModalDrawerSheet(
         drawerShape = RectangleShape,
         modifier = Modifier
@@ -130,7 +129,7 @@ private fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items
             .width(300.dp)
     ) {
         DrawerHeader(drawerState, scope, navController)
-        DrawerItems(items, drawerState, scope)
+        DrawerItems(items, drawerState, scope, navController)
     }
 }
 
@@ -184,6 +183,8 @@ private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navCon
 private fun DrawerItem(
     iconId: Int,
     label: String,
+    destination: String,
+    navController: NavController,
     onClick: () -> Unit,
     bottomPadding: Dp = 0.dp // Default padding is 0.dp
 ) {
@@ -205,7 +206,10 @@ private fun DrawerItem(
             )
         },
         selected = false,
-        onClick = onClick,
+        onClick = {
+            onClick()
+            navController.navigate(destination)
+        },
         modifier = Modifier
             .padding(NavigationDrawerItemDefaults.ItemPadding)
             .then(
@@ -219,13 +223,15 @@ private fun DrawerItem(
 }
 
 @Composable
-private fun DrawerItems(items: List<Pair<Int, String>>, drawerState: DrawerState, scope: CoroutineScope) {
+private fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
     Column {
         // Top items
         items.filter { it.second != "Settings" }.forEach { item ->
             DrawerItem(
                 iconId = item.first,
                 label = item.second,
+                destination = item.second.replace(" ", ""),
+                navController = navController,
                 onClick = { scope.launch { drawerState.close() } }
             )
         }
@@ -238,6 +244,8 @@ private fun DrawerItems(items: List<Pair<Int, String>>, drawerState: DrawerState
             DrawerItem(
                 iconId = settingsItem.first,
                 label = settingsItem.second,
+                destination = settingsItem.second.replace(" ", ""),
+                navController = navController,
                 onClick = { scope.launch { drawerState.close() } },
                 bottomPadding = 16.dp // Adjust the padding as needed
             )
