@@ -73,7 +73,7 @@ fun LoginAndRegisterScreen(navController: NavController, isRegister: Boolean) {
                 Row(horizontalArrangement = Arrangement.Start, modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 10.dp)) {
-                    IconButton(onClick = { navController.popBackStack()}) {
+                    IconButton(onClick = { navController.navigate("home")}) {
                         Icon(
                             Icons.Rounded.Close,
                             contentDescription = "close",
@@ -242,8 +242,8 @@ fun LoginAndRegisterScreen(navController: NavController, isRegister: Boolean) {
                             .align(Alignment.CenterVertically)
                             .padding(bottom = 1.dp)
                     )
-                    TextButton(onClick = { /*TODO*/ }) {
-                        Text(text = actionWord, fontSize = 18.sp, textDecoration = TextDecoration.Underline)
+                    TextButton(onClick = { navController.navigate(if (isRegister) "login" else "register") }) {
+                        Text(text = if (isRegister) "Sign in" else "Sign up", fontSize = 18.sp, textDecoration = TextDecoration.Underline)
                     }
                 }
             }
