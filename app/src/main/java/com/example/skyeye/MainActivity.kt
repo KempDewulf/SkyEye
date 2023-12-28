@@ -1,14 +1,11 @@
 package com.example.skyeye
 
-import android.content.res.Resources.Theme
 import android.os.Bundle
 import android.view.Gravity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,13 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -56,8 +49,6 @@ import com.example.skyeye.ui.theme.SkyEyeTheme
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -119,7 +110,12 @@ private fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items
 @Composable
 private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope) {
     Spacer(Modifier.height(12.dp))
-    Row {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         IconButton(onClick = { scope.launch { drawerState.close() } }) {
             Icon(
                 Icons.Rounded.ArrowBack,
@@ -128,23 +124,23 @@ private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope) {
                     .size(30.dp)
             )
         }
-        TextButton(onClick = { /*TODO: send to register page*/ }) {
-            Text(text = "Register", fontSize = 22.sp, modifier = Modifier.padding(start = 35.dp))
-        }
-        Box(
-            modifier = Modifier
-                .padding(vertical = 10.dp)
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "or", fontSize = 22.sp)
-        }
-        TextButton(onClick = { /*TODO: send to log in page*/ }) {
-            Text(text = "Log in", fontSize = 22.sp)
+            TextButton(onClick = { /*TODO: send to register page*/ }) {
+                Text(text = "Register", fontSize = 22.sp)
+            }
+            Text(text = "or", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 22.sp)
+            TextButton(onClick = { /*TODO: send to log in page*/ }) {
+                Text(text = "Log in", fontSize = 22.sp)
+            }
         }
     }
     Divider(
         color = MaterialTheme.colorScheme.outlineVariant,
         thickness = 1.dp,
-        modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+        modifier = Modifier.padding(start = 25.dp, end = 25.dp, top = 5.dp)
     )
     Spacer(Modifier.height(18.dp))
 }
@@ -153,8 +149,8 @@ private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope) {
 private fun DrawerItems(items: List<Pair<Int, String>>, drawerState: DrawerState, scope: CoroutineScope) {
     items.forEach { item ->
         NavigationDrawerItem(
-            icon = { Icon(painterResource(item.first), contentDescription = null, modifier = Modifier.size(28.dp)) },
-            label = { Text(item.second, fontSize = 16.sp) },
+            icon = { Icon(painterResource(item.first), tint = MaterialTheme.colorScheme.primary, contentDescription = null, modifier = Modifier.size(26.dp)) },
+            label = { Text(item.second, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp, modifier = Modifier.padding(start = 8.dp)) },
             selected = false,
             onClick = {
                 scope.launch { drawerState.close() }
