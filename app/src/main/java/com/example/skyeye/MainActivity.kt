@@ -84,7 +84,10 @@ class MainActivity : ComponentActivity() {
                             Drawer(navController = navController)
                         }
                         composable("login") {
-                            LoginScreen()
+                            LoginAndRegisterScreen(navController = navController, false)
+                        }
+                        composable("register") {
+                            LoginAndRegisterScreen(navController = navController, true)
                         }
                         composable("seeAllAirports") {
                             AirportsScreen(navController)
@@ -151,7 +154,11 @@ private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navCon
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = { /*TODO: send to register page*/ }) {
+            TextButton(onClick = {
+                scope.launch {
+                    drawerState.close()
+                    navController.navigate("register")
+                } }) {
                 Text(text = "Register", fontSize = 22.sp)
             }
             Text(text = "or", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 22.sp)
