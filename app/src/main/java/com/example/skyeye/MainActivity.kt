@@ -1,14 +1,16 @@
 package com.example.skyeye
 
-import android.content.res.Resources.Theme
 import android.os.Bundle
 import android.view.Gravity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,13 +21,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -63,6 +61,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -71,12 +73,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SkyEyeTheme {
-                // A surface container using the 'background' color from the theme
+                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Drawer()
+                    NavHost(
+                        navController = navController,
+                        startDestination = "home"
+                    ) {
+                        composable("home") {
+                            Drawer(navController = navController)
+                        }
+                        composable("login", enterTransition = { slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Up,
+                            animationSpec = tween(100),
+                        ) }) {
+                            LoginScreen()
+                        }
+                    }
                 }
             }
         }
@@ -84,7 +99,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Drawer() {
+fun Drawer(navController: NavController) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val items = listOf(
@@ -98,26 +113,26 @@ fun Drawer() {
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = false,
-        drawerContent = { DrawerContent(drawerState, scope, items) },
+        drawerContent = { DrawerContent(drawerState, scope, items, navController) },
         content = { Homescreen(drawerState, scope) }
     )
 }
 
 @Composable
-private fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Pair<Int, String>>) {
+private fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Pair<Int, String>>, navController: NavController) {
     ModalDrawerSheet(
         drawerShape = RectangleShape,
         modifier = Modifier
             .fillMaxHeight()
             .width(300.dp)
     ) {
-        DrawerHeader(drawerState, scope)
+        DrawerHeader(drawerState, scope, navController)
         DrawerItems(items, drawerState, scope)
     }
 }
 
 @Composable
-private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope) {
+private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
     Spacer(Modifier.height(12.dp))
     Row {
         IconButton(onClick = { scope.launch { drawerState.close() } }) {
@@ -137,7 +152,12 @@ private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope) {
         ) {
             Text(text = "or", fontSize = 22.sp)
         }
-        TextButton(onClick = { /*TODO: send to log in page*/ }) {
+        TextButton(onClick = {
+            scope.launch {
+                drawerState.close()
+                navController.navigate("login")
+            }
+        }) {
             Text(text = "Log in", fontSize = 22.sp)
         }
     }
@@ -150,7 +170,11 @@ private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope) {
 }
 
 @Composable
-private fun DrawerItems(items: List<Pair<Int, String>>, drawerState: DrawerState, scope: CoroutineScope) {
+private fun DrawerItems(
+    items: List<Pair<Int, String>>,
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+) {
     items.forEach { item ->
         NavigationDrawerItem(
             icon = { Icon(painterResource(item.first), contentDescription = null, modifier = Modifier.size(28.dp)) },
