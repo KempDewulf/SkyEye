@@ -113,14 +113,14 @@ fun AirportList(expandedCountries: Set<String>, searchText: String, onToggle: (S
             AirportData("Chaghcaran Airport", "CCN / OACC")
         )),
         "Albania" to Pair("ALB", listOf(
-            AirportData("Airport x", "ALB1"),
-            AirportData("Airport x", "ALB2"),
-            AirportData("Airport x", "ALB3")
+            AirportData("Rinas Airport", "LAT / LATI"),
+            AirportData("Novsele Airport", "LAK / LAKU"),
+            AirportData("Shtiqen Airport", "LVL / LAVL")
         )),
         "Algeria" to Pair("DZA", listOf(
-            AirportData("Airport x", "DZA1"),
-            AirportData("Airport x", "DZA2"),
-            AirportData("Airport x", "DZA3")
+            AirportData("Houari Boumediene Airport", "ALG / ALGA"),
+            AirportData("Es Senia Airport", "ORN / ORNA"),
+            AirportData("Ain Arnat Airport", "QSF / QSFA")
         ))
         // Add more countries and airports as needed
     )
