@@ -85,7 +85,13 @@ class MainActivity : ComponentActivity() {
                             AnimatedContentTransitionScope.SlideDirection.Up,
                             animationSpec = tween(100),
                         ) }) {
-                            LoginScreen()
+                            LoginAndRegisterScreen(navController = navController, false)
+                        }
+                        composable("register", enterTransition = { slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Up,
+                            animationSpec = tween(100),
+                        ) }) {
+                            LoginAndRegisterScreen(navController = navController, true)
                         }
                     }
                 }
@@ -149,7 +155,11 @@ private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navCon
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(onClick = { /*TODO: send to register page*/ }) {
+            TextButton(onClick = {
+                scope.launch {
+                    drawerState.close()
+                    navController.navigate("register")
+                } }) {
                 Text(text = "Register", fontSize = 22.sp)
             }
             Text(text = "or", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 22.sp)
