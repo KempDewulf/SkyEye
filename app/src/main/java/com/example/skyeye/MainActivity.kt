@@ -1,9 +1,11 @@
 package com.example.skyeye
 
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Column
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -58,13 +60,16 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -92,10 +97,17 @@ class MainActivity : ComponentActivity() {
                         composable("seeAllAirports") {
                             AirportsScreen(navController)
                         }
-                        composable("AirportDetailScreen/{icao}") { backStackEntry ->
+                        composable(
+                            route = "AirportDetailScreen/{icao}/{airportName}",
+                            arguments = listOf(
+                                navArgument("icao") { type = NavType.StringType },
+                                navArgument("airportName") { type = NavType.StringType }
+                            )
+                        ) { backStackEntry ->
                             val icao = backStackEntry.arguments?.getString("icao")
-                            if (icao != null) {
-                                AirportDetailScreen(icao)
+                            val airportName = backStackEntry.arguments?.getString("airportName")
+                            if (icao != null && airportName != null) {
+                                AirportDetailScreen(icao, airportName, navController = navController)
                             }
                         }
                     }

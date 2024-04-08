@@ -194,7 +194,7 @@ fun AirportItem(navController: NavController, airportName: String, ICAO: String)
             .padding(8.dp)
             .padding(start = 16.dp) // Add left padding for child items
             .clickable {
-                navController.navigate("AirportDetailScreen/$ICAO")
+                navController.navigate("AirportDetailScreen/$ICAO/$airportName")
             },
     ) {
         // Label on top
