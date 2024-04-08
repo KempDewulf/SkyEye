@@ -92,6 +92,9 @@ class MainActivity : ComponentActivity() {
                         composable("seeAllAirports") {
                             AirportsScreen(navController)
                         }
+                        composable("settings") {
+                            SettingsScreen(navController)
+                        }
                     }
                 }
             }
@@ -116,7 +119,7 @@ fun Drawer(navController: NavController) {
         gesturesEnabled = false,
         drawerContent = { DrawerContent(drawerState, scope, items, navController) },
         scrimColor = Color.Black.copy(alpha = 0.8f),
-        content = { Homescreen(drawerState, scope) }
+        content = { Homescreen(drawerState, scope, navController) }
     )
 }
 
@@ -230,7 +233,7 @@ private fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: D
             DrawerItem(
                 iconId = item.first,
                 label = item.second,
-                destination = item.second.replace(" ", ""),
+                destination = item.third,
                 navController = navController,
                 onClick = { scope.launch { drawerState.close() } }
             )
@@ -244,7 +247,7 @@ private fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: D
             DrawerItem(
                 iconId = settingsItem.first,
                 label = settingsItem.second,
-                destination = settingsItem.second.replace(" ", ""),
+                destination = settingsItem.third,
                 navController = navController,
                 onClick = { scope.launch { drawerState.close() } },
                 bottomPadding = 16.dp // Adjust the padding as needed
@@ -254,13 +257,13 @@ private fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: D
 }
 
 @Composable
-fun Homescreen(drawerState: DrawerState, scope: CoroutineScope) {
+fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
     Scaffold(
         topBar = {
             TopBar(drawerState, scope)
         },
         bottomBar = {
-            BottomAppBar()
+            BottomAppBar(navController)
         }
     ) { paddingValues ->
         // Use the contentPadding parameter to apply padding to the content
@@ -288,7 +291,7 @@ fun TopBar(drawerState: DrawerState, scope: CoroutineScope) {
 }
 
 @Composable
-fun BottomAppBar() {
+fun BottomAppBar(navController: NavController) {
     var selectedItem by remember { mutableIntStateOf(-1) }
     val items = listOf(
         Pair(R.drawable.settings, "Settings"),
@@ -303,7 +306,10 @@ fun BottomAppBar() {
                 icon = { Icon(painterResource(id = icon), contentDescription = label) },
                 label = { Text(label) },
                 selected = selectedItem == index,
-                onClick = { selectedItem = index }
+                onClick = {
+                    selectedItem = index
+                    navController.navigate(label.lowercase())
+                }
             )
         }
     }
