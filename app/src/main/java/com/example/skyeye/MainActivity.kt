@@ -1,9 +1,11 @@
 package com.example.skyeye
 
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Column
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -58,6 +60,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -67,12 +70,14 @@ import com.example.skyeye.settings.AccountSettingsScreen
 import com.example.skyeye.settings.AppearanceSettingsScreen
 import com.example.skyeye.settings.SettingsScreen
 import com.example.skyeye.settings.SupportSettingsScreen
+import androidx.navigation.navArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 var buildVersion = "0.2.0"
 
 class MainActivity : ComponentActivity() {
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -115,6 +120,17 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("About") {
                                 AboutSettingsScreen(navController)
+                        composable(
+                            route = "AirportDetailScreen/{icao}/{airportName}",
+                            arguments = listOf(
+                                navArgument("icao") { type = NavType.StringType },
+                                navArgument("airportName") { type = NavType.StringType }
+                            )
+                        ) { backStackEntry ->
+                            val icao = backStackEntry.arguments?.getString("icao")
+                            val airportName = backStackEntry.arguments?.getString("airportName")
+                            if (icao != null && airportName != null) {
+                                AirportDetailScreen(icao, airportName, navController = navController)
                             }
                         }
                     }
@@ -290,7 +306,9 @@ fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: N
     ) { paddingValues ->
         // Use the contentPadding parameter to apply padding to the content
         MapView(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            latitude = 50.5,
+            longitude = 4.47
         )
     }
 }
@@ -338,7 +356,15 @@ fun BottomAppBar(navController: NavController) {
 }
 
 @Composable
-fun MapView(modifier: Modifier = Modifier) {
+fun MapView(
+    modifier: Modifier = Modifier,
+    latitude: Double,
+    longitude: Double,
+    showCompass: Boolean = true,
+    userInteractionEnabled: Boolean = true,
+    zoomValue: Double = 3.5,
+    styleUrl: String = "https://api.maptiler.com/maps/basic-v2/style.json"
+) {
     AndroidView(
         modifier = modifier,
         factory = { context ->
@@ -347,18 +373,21 @@ fun MapView(modifier: Modifier = Modifier) {
             val styleUrl = "https://api.maptiler.com/maps/basic-v2/style.json?key=OZkqnFxcrUbHDpJQ5a3K"
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
-                // Set the style after mapView was loaded
-                map.setStyle(styleUrl) {
+                map.setStyle(styleUrl + "?key=OZkqnFxcrUbHDpJQ5a3K") {
+                    map.uiSettings.isScrollGesturesEnabled = userInteractionEnabled
+                    map.uiSettings.isZoomGesturesEnabled = userInteractionEnabled
+                    map.uiSettings.isTiltGesturesEnabled = userInteractionEnabled
+                    map.uiSettings.isRotateGesturesEnabled = userInteractionEnabled
                     map.uiSettings.setAttributionMargins(15, 0, 0, 15)
+                    map.uiSettings.isCompassEnabled = showCompass
                     map.uiSettings.compassGravity = Gravity.BOTTOM or Gravity.START
                     map.uiSettings.setCompassMargins(40, 0, 0, 40)
                     map.uiSettings.isAttributionEnabled = false
                     map.uiSettings.isLogoEnabled = false
                     map.uiSettings.setCompassFadeFacingNorth(false)
-                    // Set the map view center
                     map.cameraPosition = CameraPosition.Builder()
-                        .target(LatLng(50.5, 4.47))
-                        .zoom(3.5)
+                        .target(LatLng(latitude, longitude))
+                        .zoom(zoomValue)
                         .bearing(2.0)
                         .build()
                 }
@@ -367,4 +396,3 @@ fun MapView(modifier: Modifier = Modifier) {
         }
     )
 }
-

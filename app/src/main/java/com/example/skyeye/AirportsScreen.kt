@@ -1,5 +1,6 @@
 package com.example.skyeye
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -101,12 +102,12 @@ fun AirportsScreen(navController: NavController) {
                 .padding(bottom = 16.dp)
         )
 
-        AirportList(expandedCountries, searchText) { country -> expandedCountries = toggleCountry(expandedCountries, country) }
+        AirportList(navController, expandedCountries, searchText) { country -> expandedCountries = toggleCountry(expandedCountries, country) }
     }
 }
 
 @Composable
-fun AirportList(expandedCountries: Set<String>, searchText: String, onToggle: (String) -> Unit) {
+fun AirportList(navController: NavController, expandedCountries: Set<String>, searchText: String, onToggle: (String) -> Unit) {
     val airportsByCountry = mapOf(
         "Afghanistan" to Pair("AFG", listOf(
             AirportData("Bost Airport", "BST / OABT"),
@@ -143,8 +144,8 @@ fun AirportList(expandedCountries: Set<String>, searchText: String, onToggle: (S
                 // Filter airports based on search text
                 val filteredAirports = airports.filter { it.ICAO.contains(searchText, ignoreCase = true) }
                 items(filteredAirports) { airport ->
-                    // Pass the ICAO for each AirportItem
-                    AirportItem(airport.name, airport.ICAO)
+                    // Pass the NavController and the ICAO for each AirportItem
+                    AirportItem(navController, airport.name, airport.ICAO.split(" / ").last())
                 }
             }
         }
@@ -185,13 +186,16 @@ fun CountryItem(country: String, countryCode: String, onClick: () -> Unit, isExp
 }
 
 @Composable
-fun AirportItem(airportName: String, ICAO: String) {
+fun AirportItem(navController: NavController, airportName: String, ICAO: String) {
     // Each airport item under the country
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .padding(start = 16.dp), // Add left padding for child items
+            .padding(start = 16.dp) // Add left padding for child items
+            .clickable {
+                navController.navigate("AirportDetailScreen/$ICAO/$airportName")
+            },
     ) {
         // Label on top
         Text(text = ICAO, style = MaterialTheme.typography.labelSmall)
