@@ -22,16 +22,13 @@ sealed interface APIUiState {
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class APIViewModel : ViewModel() {
     var apiUiState: APIUiState by mutableStateOf(APIUiState.Loading)
-    init {
-        getQuote()
-    }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    fun getQuote() {
+    fun getAirportData(icao: String) {
         viewModelScope.launch {
             apiUiState = APIUiState.Loading
             apiUiState = try {
-                val result = skyEyeApi.retrofitService.getQuotes()
+                val result = skyEyeApi.retrofitService.getAirportData(icao)
                 APIUiState.Success(
                     "${result.toString()}"
                 )
