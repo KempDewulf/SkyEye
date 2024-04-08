@@ -92,6 +92,12 @@ class MainActivity : ComponentActivity() {
                         composable("seeAllAirports") {
                             AirportsScreen(navController)
                         }
+                        composable("AirportDetailScreen/{icao}") { backStackEntry ->
+                            val icao = backStackEntry.arguments?.getString("icao")
+                            if (icao != null) {
+                                AirportDetailScreen(icao)
+                            }
+                        }
                     }
                 }
             }
