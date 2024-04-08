@@ -70,7 +70,7 @@ import com.example.skyeye.settings.SupportSettingsScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-var buildVersion = "1.0.0"
+var buildVersion = "0.2.0"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
