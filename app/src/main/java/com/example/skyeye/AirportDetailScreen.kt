@@ -84,15 +84,15 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
             }
 
             val details = listOf(
-                "ICAO Code" to "OABT",
-                "IATA Code" to "BST",
-                "ICAO Region" to "APAC",
-                "ICAO Territory" to "Afghanistan",
-                "Location" to "Lashkar Gah, Helmand",
-                "Serving" to "Lashkar Gah",
-                "Elevation" to "2464 ft",
-                "Coordinates" to "31° 33' 37\" N , 64° 21' 53\" E",
-                "KCC" to "Bwh"
+                "ICAO Code" to "OABT", //VARIABLE VALUE
+                "IATA Code" to "BST", //VARIABLE VALUE
+                "ICAO Region" to "APAC", //VARIABLE VALUE
+                "ICAO Territory" to "Afghanistan", //VARIABLE VALUE
+                "Location" to "Lashkar Gah, Helmand", //VARIABLE VALUE
+                "Serving" to "Lashkar Gah", //VARIABLE VALUE
+                "Elevation" to "2464 ft", //VARIABLE VALUE
+                "Coordinates" to "31° 33' 37\" N , 64° 21' 53\" E", //VARIABLE VALUE
+                "KCC" to "Bwh" //VARIABLE VALUE
             )
 
             items(details) { detail ->
@@ -102,7 +102,7 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
             item {
                 Section(title = "METAR") {
                     Text(
-                        text = "METAR OIZB 091600Z 00000KT CAVOK 25/01 Q1014",
+                        text = "METAR OIZB 091600Z 00000KT CAVOK 25/01 Q1014", //VARIABLE METAR
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp)
@@ -116,10 +116,12 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp),
-                        latitude = 31.56,
-                        longitude = 64.36,
+                        latitude = 31.56, //VARIABLE COORDS
+                        longitude = 64.36, //VARIABLE COORDS
                         showCompass = false,
-                        userInteractionEnabled = false
+                        userInteractionEnabled = false,
+                        zoomValue = 13.5,
+                        styleUrl = "https://api.maptiler.com/maps/cadastre-satellite/style.json"
                     )
                 }
             }

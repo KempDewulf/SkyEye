@@ -335,17 +335,18 @@ fun MapView(
     latitude: Double,
     longitude: Double,
     showCompass: Boolean = true,
-    userInteractionEnabled: Boolean = true
+    userInteractionEnabled: Boolean = true,
+    zoomValue: Double = 3.5,
+    styleUrl: String = "https://api.maptiler.com/maps/basic-v2/style.json"
 ) {
     AndroidView(
         modifier = modifier,
         factory = { context ->
             Mapbox.getInstance(context)
             val mapView = com.mapbox.mapboxsdk.maps.MapView(context)
-            val styleUrl = "https://api.maptiler.com/maps/basic-v2/style.json?key=OZkqnFxcrUbHDpJQ5a3K"
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
-                map.setStyle(styleUrl) {
+                map.setStyle(styleUrl + "?key=OZkqnFxcrUbHDpJQ5a3K") {
                     map.uiSettings.isScrollGesturesEnabled = userInteractionEnabled
                     map.uiSettings.isZoomGesturesEnabled = userInteractionEnabled
                     map.uiSettings.isTiltGesturesEnabled = userInteractionEnabled
@@ -359,7 +360,7 @@ fun MapView(
                     map.uiSettings.setCompassFadeFacingNorth(false)
                     map.cameraPosition = CameraPosition.Builder()
                         .target(LatLng(latitude, longitude))
-                        .zoom(3.5)
+                        .zoom(zoomValue)
                         .bearing(2.0)
                         .build()
                 }
