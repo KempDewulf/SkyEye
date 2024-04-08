@@ -64,9 +64,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import com.example.skyeye.settings.AboutSettingsScreen
+import com.example.skyeye.settings.AccountSettingsScreen
+import com.example.skyeye.settings.AppearanceSettingsScreen
+import com.example.skyeye.settings.SettingsScreen
+import com.example.skyeye.settings.SupportSettingsScreen
 import androidx.navigation.navArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+var buildVersion = "0.2.0"
 
 class MainActivity : ComponentActivity() {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -97,6 +105,21 @@ class MainActivity : ComponentActivity() {
                         composable("seeAllAirports") {
                             AirportsScreen(navController)
                         }
+                        navigation(startDestination = "main", route = "settings") {
+                            composable("main") {
+                                SettingsScreen(navController)
+                            }
+                            composable("account") {
+                                AccountSettingsScreen(navController)
+                            }
+                            composable("appearance") {
+                                AppearanceSettingsScreen(navController)
+                            }
+                            composable("support") {
+                                SupportSettingsScreen(navController)
+                            }
+                            composable("About") {
+                                AboutSettingsScreen(navController)
                         composable(
                             route = "AirportDetailScreen/{icao}/{airportName}",
                             arguments = listOf(
@@ -134,7 +157,7 @@ fun Drawer(navController: NavController) {
         gesturesEnabled = false,
         drawerContent = { DrawerContent(drawerState, scope, items, navController) },
         scrimColor = Color.Black.copy(alpha = 0.8f),
-        content = { Homescreen(drawerState, scope) }
+        content = { Homescreen(drawerState, scope, navController) }
     )
 }
 
@@ -248,7 +271,7 @@ private fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: D
             DrawerItem(
                 iconId = item.first,
                 label = item.second,
-                destination = item.second.replace(" ", ""),
+                destination = item.third,
                 navController = navController,
                 onClick = { scope.launch { drawerState.close() } }
             )
@@ -262,7 +285,7 @@ private fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: D
             DrawerItem(
                 iconId = settingsItem.first,
                 label = settingsItem.second,
-                destination = settingsItem.second.replace(" ", ""),
+                destination = settingsItem.third,
                 navController = navController,
                 onClick = { scope.launch { drawerState.close() } },
                 bottomPadding = 16.dp // Adjust the padding as needed
@@ -272,13 +295,13 @@ private fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: D
 }
 
 @Composable
-fun Homescreen(drawerState: DrawerState, scope: CoroutineScope) {
+fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
     Scaffold(
         topBar = {
             TopBar(drawerState, scope)
         },
         bottomBar = {
-            BottomAppBar()
+            BottomAppBar(navController)
         }
     ) { paddingValues ->
         // Use the contentPadding parameter to apply padding to the content
@@ -308,7 +331,7 @@ fun TopBar(drawerState: DrawerState, scope: CoroutineScope) {
 }
 
 @Composable
-fun BottomAppBar() {
+fun BottomAppBar(navController: NavController) {
     var selectedItem by remember { mutableIntStateOf(-1) }
     val items = listOf(
         Pair(R.drawable.settings, "Settings"),
@@ -323,7 +346,10 @@ fun BottomAppBar() {
                 icon = { Icon(painterResource(id = icon), contentDescription = label) },
                 label = { Text(label) },
                 selected = selectedItem == index,
-                onClick = { selectedItem = index }
+                onClick = {
+                    selectedItem = index
+                    navController.navigate(label.lowercase())
+                }
             )
         }
     }
@@ -344,6 +370,7 @@ fun MapView(
         factory = { context ->
             Mapbox.getInstance(context)
             val mapView = com.mapbox.mapboxsdk.maps.MapView(context)
+            val styleUrl = "https://api.maptiler.com/maps/basic-v2/style.json?key=OZkqnFxcrUbHDpJQ5a3K"
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
                 map.setStyle(styleUrl + "?key=OZkqnFxcrUbHDpJQ5a3K") {
