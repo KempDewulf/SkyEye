@@ -322,7 +322,7 @@ fun MapView(modifier: Modifier = Modifier) {
         factory = { context ->
             Mapbox.getInstance(context)
             val mapView = com.mapbox.mapboxsdk.maps.MapView(context)
-            val styleUrl = "https://api.maptiler.com/maps/basic-v2/style.json?key=OZkqnFxcrUbHDpJQ5a3K";
+            val styleUrl = "https://api.maptiler.com/maps/basic-v2/style.json?key=OZkqnFxcrUbHDpJQ5a3K"
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
                 // Set the style after mapView was loaded
