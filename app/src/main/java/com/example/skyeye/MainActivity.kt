@@ -61,9 +61,16 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import com.example.skyeye.settings.AboutSettingsScreen
+import com.example.skyeye.settings.AccountSettingsScreen
+import com.example.skyeye.settings.AppearanceSettingsScreen
 import com.example.skyeye.settings.SettingsScreen
+import com.example.skyeye.settings.SupportSettingsScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+var buildVersion = "1.0.0"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,20 +100,22 @@ class MainActivity : ComponentActivity() {
                         composable("seeAllAirports") {
                             AirportsScreen(navController)
                         }
-                        composable("settings") {
-                            SettingsScreen(navController)
-                        }
-                        composable("accountSettings") {
-                            //AccountSettingsScreen(navController)
-                        }
-                        composable("appearanceSettings") {
-                            //AppearanceSettingsScreen(navController)
-                        }
-                        composable("supportSettings") {
-                            //SupportSettingsScreen(navController)
-                        }
-                        composable("AboutSettings") {
-                            //AboutSettingsScreen(navController)
+                        navigation(startDestination = "main", route = "settings") {
+                            composable("main") {
+                                SettingsScreen(navController)
+                            }
+                            composable("account") {
+                                AccountSettingsScreen(navController)
+                            }
+                            composable("appearance") {
+                                AppearanceSettingsScreen(navController)
+                            }
+                            composable("support") {
+                                SupportSettingsScreen(navController)
+                            }
+                            composable("About") {
+                                AboutSettingsScreen(navController)
+                            }
                         }
                     }
                 }

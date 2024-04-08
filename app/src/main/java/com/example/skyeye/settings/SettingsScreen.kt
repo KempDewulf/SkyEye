@@ -46,18 +46,25 @@ fun SettingsScreen(navController: NavController) {
     }
 
     if (isBackgroundLoaded) {
+        val items = listOf(
+            Pair("Account", Icons.Rounded.AccountCircle),
+            Pair("Appearance", Icons.Rounded.Star),
+            Pair("Support", Icons.Rounded.Build),
+            Pair("About", Icons.Rounded.Info)
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             SettingsTopBar(navController)
-            SettingsItems()
+            SettingsItems(navController, items)
         }
     }
 }
 
 @Composable
-fun SettingsTopBar(navController: NavController) {
+fun SettingsTopBar(navController: NavController, title: String = "Settings") {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -77,7 +84,7 @@ fun SettingsTopBar(navController: NavController) {
                 )
             }
             Text(
-                text = "Settings",
+                text = title,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -86,31 +93,26 @@ fun SettingsTopBar(navController: NavController) {
 }
 
 @Composable
-fun SettingsItems() {
+fun SettingsItems(navController: NavController, items: List<Pair<String, ImageVector>>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 40.dp, vertical = 20.dp)
     ) {
-        val items = listOf(
-            Pair("Account", Icons.Rounded.AccountCircle),
-            Pair("Appearance", Icons.Rounded.Star),
-            Pair("Support", Icons.Rounded.Build),
-            Pair("About", Icons.Rounded.Info)
-        )
+
         items.forEachIndexed { index, (item, icon) ->
-            SettingsItem(index, item, icon)
+            SettingsItem(navController,index, item, icon)
         }
     }
 }
 
 @Composable
-fun SettingsItem(index: Int, item: String, icon: ImageVector) {
+fun SettingsItem(navController: NavController, index: Int, item: String, icon: ImageVector) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = {
-                // Handle click
+                navController.navigate(item.lowercase());
             })
     ) {
         Row(
