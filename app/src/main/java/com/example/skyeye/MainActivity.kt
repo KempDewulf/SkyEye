@@ -283,7 +283,9 @@ fun Homescreen(drawerState: DrawerState, scope: CoroutineScope) {
     ) { paddingValues ->
         // Use the contentPadding parameter to apply padding to the content
         MapView(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            latitude = 50.5,
+            longitude = 4.47
         )
     }
 }
@@ -328,26 +330,35 @@ fun BottomAppBar() {
 }
 
 @Composable
-fun MapView(modifier: Modifier = Modifier) {
+fun MapView(
+    modifier: Modifier = Modifier,
+    latitude: Double,
+    longitude: Double,
+    showCompass: Boolean = true,
+    userInteractionEnabled: Boolean = true
+) {
     AndroidView(
         modifier = modifier,
         factory = { context ->
             Mapbox.getInstance(context)
             val mapView = com.mapbox.mapboxsdk.maps.MapView(context)
-            val styleUrl = "https://api.maptiler.com/maps/basic-v2/style.json?key=OZkqnFxcrUbHDpJQ5a3K";
+            val styleUrl = "https://api.maptiler.com/maps/basic-v2/style.json?key=OZkqnFxcrUbHDpJQ5a3K"
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
-                // Set the style after mapView was loaded
                 map.setStyle(styleUrl) {
+                    map.uiSettings.isScrollGesturesEnabled = userInteractionEnabled
+                    map.uiSettings.isZoomGesturesEnabled = userInteractionEnabled
+                    map.uiSettings.isTiltGesturesEnabled = userInteractionEnabled
+                    map.uiSettings.isRotateGesturesEnabled = userInteractionEnabled
                     map.uiSettings.setAttributionMargins(15, 0, 0, 15)
+                    map.uiSettings.isCompassEnabled = showCompass
                     map.uiSettings.compassGravity = Gravity.BOTTOM or Gravity.START
                     map.uiSettings.setCompassMargins(40, 0, 0, 40)
                     map.uiSettings.isAttributionEnabled = false
                     map.uiSettings.isLogoEnabled = false
                     map.uiSettings.setCompassFadeFacingNorth(false)
-                    // Set the map view center
                     map.cameraPosition = CameraPosition.Builder()
-                        .target(LatLng(50.5, 4.47))
+                        .target(LatLng(latitude, longitude))
                         .zoom(3.5)
                         .bearing(2.0)
                         .build()
@@ -357,4 +368,3 @@ fun MapView(modifier: Modifier = Modifier) {
         }
     )
 }
-

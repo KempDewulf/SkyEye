@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -111,11 +112,14 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
 
             item {
                 Section(title = "MAP") {
-                    Text(
-                        text = "MAP HERE",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp)
+                    MapView(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        latitude = 31.56,
+                        longitude = 64.36,
+                        showCompass = false,
+                        userInteractionEnabled = false
                     )
                 }
             }
