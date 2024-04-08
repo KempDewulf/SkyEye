@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Divider
@@ -78,52 +79,45 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
                 .padding(16.dp)
         ) {
             item {
-                Text(
-                    text = airportName,
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Divider(modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 20.dp))
+                Section(title = airportName) {}
             }
 
-            item { TitleValueComponent(title = "ICAO Code", value = "OABT") }
-            item { TitleValueComponent(title = "IATA Code", value = "BST") }
-            item { TitleValueComponent(title = "ICAO Region", value = "APAC") }
-            item { TitleValueComponent(title = "ICAO Territory", value = "Afghanistan") }
-            item { TitleValueComponent(title = "Location", value = "Lashkar Gah, Helmand") }
-            item { TitleValueComponent(title = "Serving", value = "Lashkar Gah") }
-            item { TitleValueComponent(title = "Elevation", value = "2464 ft") }
-            item { TitleValueComponent(title = "Coordinates", value = "31° 33' 37\" N , 64° 21' 53\" E") }
-            item { TitleValueComponent(title = "KCC", value = "Bwh") }
+            val details = listOf(
+                "ICAO Code" to "OABT",
+                "IATA Code" to "BST",
+                "ICAO Region" to "APAC",
+                "ICAO Territory" to "Afghanistan",
+                "Location" to "Lashkar Gah, Helmand",
+                "Serving" to "Lashkar Gah",
+                "Elevation" to "2464 ft",
+                "Coordinates" to "31° 33' 37\" N , 64° 21' 53\" E",
+                "KCC" to "Bwh"
+            )
 
-            item {
-                Text(
-                    text = "METAR",
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Divider(modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 20.dp))
-                Text(
-                    text = "METAR OIZB 091600Z 00000KT CAVOK 25/01 Q1014",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp)
-                )
+            items(details) { detail ->
+                TitleValueComponent(title = detail.first, value = detail.second)
             }
 
             item {
-                Text(
-                    text = "MAP",
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Divider(modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 20.dp))
-                Text(
-                    text = "MAP HERE",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp)
-                )
+                Section(title = "METAR") {
+                    Text(
+                        text = "METAR OIZB 091600Z 00000KT CAVOK 25/01 Q1014",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp)
+                    )
+                }
+            }
+
+            item {
+                Section(title = "MAP") {
+                    Text(
+                        text = "MAP HERE",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp)
+                    )
+                }
             }
         }
     }
@@ -143,4 +137,17 @@ fun TitleValueComponent(title: String, value: String) {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp)
     )
+}
+
+@Composable
+fun Section(title: String, content: @Composable () -> Unit) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Divider(modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 20.dp))
+        content()
+    }
 }
