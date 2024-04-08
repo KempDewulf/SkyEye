@@ -61,6 +61,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.skyeye.settings.SettingsScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -94,6 +95,18 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("settings") {
                             SettingsScreen(navController)
+                        }
+                        composable("accountSettings") {
+                            //AccountSettingsScreen(navController)
+                        }
+                        composable("appearanceSettings") {
+                            //AppearanceSettingsScreen(navController)
+                        }
+                        composable("supportSettings") {
+                            //SupportSettingsScreen(navController)
+                        }
+                        composable("AboutSettings") {
+                            //AboutSettingsScreen(navController)
                         }
                     }
                 }
