@@ -28,6 +28,7 @@ import com.example.skyeye.apirequest.ui.APIUiState
 import com.example.skyeye.apirequest.ui.APIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.mapbox.mapboxsdk.maps.MapView
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable

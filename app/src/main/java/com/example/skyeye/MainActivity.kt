@@ -120,6 +120,8 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("About") {
                                 AboutSettingsScreen(navController)
+                            }
+                        }
                         composable(
                             route = "AirportDetailScreen/{icao}/{airportName}",
                             arguments = listOf(
@@ -162,7 +164,7 @@ fun Drawer(navController: NavController) {
 }
 
 @Composable
-private fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Triple<Int, String, String>>, navController: NavController) {
+fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Triple<Int, String, String>>, navController: NavController) {
     ModalDrawerSheet(
         drawerShape = RectangleShape,
         modifier = Modifier
@@ -175,7 +177,7 @@ private fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items
 }
 
 @Composable
-private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
     Spacer(Modifier.height(12.dp))
     Row(
         modifier = Modifier
@@ -221,7 +223,7 @@ private fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navCon
 }
 
 @Composable
-private fun DrawerItem(
+fun DrawerItem(
     iconId: Int,
     label: String,
     destination: String,
@@ -264,7 +266,7 @@ private fun DrawerItem(
 }
 
 @Composable
-private fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
     Column {
         // Top items
         items.filter { it.second != "Settings" }.forEach { item ->
