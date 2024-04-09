@@ -25,19 +25,14 @@ fun AppearanceSettingsScreen(navController: NavController) {
     }
 
     if (isBackgroundLoaded) {
-        val items = listOf(
-            Pair("Account", Icons.Rounded.AccountCircle),
-            Pair("Appearance", Icons.Rounded.Star),
-            Pair("Support", Icons.Rounded.Build),
-            Pair("About", Icons.Rounded.Info)
-        )
+
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             SettingsTopBar(navController, "Appearance settings")
-            SettingsItems(navController, items)
+
         }
     }
 }

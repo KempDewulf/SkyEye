@@ -40,6 +40,7 @@ import androidx.navigation.NavController
 @Composable
 fun SettingsScreen(navController: NavController) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
+    var isUserLoggedIn by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         isBackgroundLoaded = true
@@ -47,10 +48,11 @@ fun SettingsScreen(navController: NavController) {
 
     if (isBackgroundLoaded) {
         val items = listOf(
-            Pair("Account", Icons.Rounded.AccountCircle),
-            Pair("Appearance", Icons.Rounded.Star),
-            Pair("Support", Icons.Rounded.Build),
-            Pair("About", Icons.Rounded.Info)
+            if (isUserLoggedIn) Triple("Account", "account",Icons.Rounded.AccountCircle)
+            else Triple("Login or Sign up", "login" ,Icons.Rounded.AccountCircle),
+            Triple("Appearance", "appearance",Icons.Rounded.Star),
+            Triple("Support", "support",Icons.Rounded.Build),
+            Triple("About", "about",Icons.Rounded.Info)
         )
 
         Column(
@@ -93,26 +95,26 @@ fun SettingsTopBar(navController: NavController, title: String = "Settings") {
 }
 
 @Composable
-fun SettingsItems(navController: NavController, items: List<Pair<String, ImageVector>>) {
+fun SettingsItems(navController: NavController, items: List<Triple<String, String, ImageVector>>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 40.dp, vertical = 20.dp)
     ) {
 
-        items.forEachIndexed { index, (item, icon) ->
-            SettingsItem(navController,index, item, icon)
+        items.forEachIndexed { index, (item, label, icon) ->
+            SettingsItem(navController,index, item, label, icon)
         }
     }
 }
 
 @Composable
-fun SettingsItem(navController: NavController, index: Int, item: String, icon: ImageVector) {
+fun SettingsItem(navController: NavController, index: Int, item: String, label: String, icon: ImageVector) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = {
-                navController.navigate(item.lowercase());
+                navController.navigate(label)
             })
     ) {
         Row(
@@ -125,7 +127,7 @@ fun SettingsItem(navController: NavController, index: Int, item: String, icon: I
             Icon(
                 imageVector = icon,
                 contentDescription = item,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(25.dp)
             )
             Text(
@@ -141,7 +143,7 @@ fun SettingsItem(navController: NavController, index: Int, item: String, icon: I
                 imageVector = Icons.Rounded.KeyboardArrowRight,
                 contentDescription = "End Icon",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp).padding(top = 5.dp)
             )
         }
         if (index > 0) {
