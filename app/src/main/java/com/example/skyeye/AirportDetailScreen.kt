@@ -41,7 +41,7 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
 
     /*when(apiUiState)
         {
-            is APIUiState.Success -> Text(text = apiUiState.quote, style = MaterialTheme.typography.bodyMedium)
+            is APIUiState.Success -> Text(text = apiUiState.data, style = MaterialTheme.typography.bodyMedium)
             is APIUiState.Loading -> Text(text = "Airport information loading...", style = MaterialTheme.typography.bodyMedium)
             is APIUiState.Error -> Text(text = "Couldn't find the airport data, try again later!")
         }*/
