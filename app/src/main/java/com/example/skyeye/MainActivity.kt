@@ -374,7 +374,7 @@ fun MapView(
             val mapView = com.mapbox.mapboxsdk.maps.MapView(context)
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
-                map.setStyle(styleUrl + "?key=OZkqnFxcrUbHDpJQ5a3K") {
+                map.setStyle("$styleUrl?key=OZkqnFxcrUbHDpJQ5a3K") {
                     map.uiSettings.isScrollGesturesEnabled = userInteractionEnabled
                     map.uiSettings.isZoomGesturesEnabled = userInteractionEnabled
                     map.uiSettings.isTiltGesturesEnabled = userInteractionEnabled
