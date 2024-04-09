@@ -102,6 +102,9 @@ class MainActivity : ComponentActivity() {
                         composable("register") {
                             LoginAndRegisterScreen(navController = navController, true)
                         }
+                        composable("seeAllAircraftTypes") {
+                            AircraftsScreen(navController)
+                        }
                         composable("seeAllAirports") {
                             AirportsScreen(navController)
                         }
@@ -135,6 +138,16 @@ class MainActivity : ComponentActivity() {
                                 AirportDetailScreen(icao, airportName, navController = navController)
                             }
                         }
+                        composable(
+                            route = "AircraftDetailScreen/{aircraftType}",
+                            arguments = listOf(
+                                navArgument("aircraftType") { type = NavType.StringType },
+                            )
+                        ) { backStackEntry ->
+                            backStackEntry.arguments?.getString("aircraftType")?.let { aircraftType ->
+                                AircraftDetailScreen(aircraftType, navController = navController)
+                            }
+                        }
                     }
                 }
             }
@@ -149,7 +162,7 @@ fun Drawer(navController: NavController) {
     val items = listOf(
         Triple(R.drawable.weather, "Check the weather", "weather"),
         Triple(R.drawable.camera, "Search airplanes with AR", "camera"),
-        Triple(R.drawable.airplane, "See all aircraft types", "aircraft"),
+        Triple(R.drawable.airplane, "See all aircraft types", "seeAllAircraftTypes"),
         Triple(R.drawable.runway, "See all airports", "seeAllAirports"),
         Triple(R.drawable.settings, "Settings", "settings")
     )
