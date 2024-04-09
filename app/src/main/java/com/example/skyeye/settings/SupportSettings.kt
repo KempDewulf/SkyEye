@@ -73,6 +73,7 @@ fun SupportForm() {
                 text = "Thank you for your message, we will get back to you as soon as possible!",
                 fontSize = 30.sp,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                lineHeight = 40.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 70.dp)
             )
             Icon(
@@ -110,7 +111,7 @@ fun SupportTexts() {
 
 @Composable
 fun SupportTextField(value: String, onValueChange: (String) -> Unit, label: String, minLines: Int = 1) {
-    val keyboardType = if (value == "Email") KeyboardType.Email else KeyboardType.Text
+    val keyboardType = if (label == "Email") KeyboardType.Email else KeyboardType.Text
     TextField(
         value = value,
         onValueChange = onValueChange,
