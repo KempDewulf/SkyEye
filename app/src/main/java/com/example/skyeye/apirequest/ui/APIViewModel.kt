@@ -14,7 +14,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface APIUiState {
-    data class Success(val quote: String) : APIUiState
+    data class Success(val data: String) : APIUiState
     object Error : APIUiState
     object Loading : APIUiState
 }
