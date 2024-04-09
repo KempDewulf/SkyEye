@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -40,7 +41,7 @@ import androidx.navigation.NavController
 @Composable
 fun SettingsScreen(navController: NavController) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
-    var isUserLoggedIn by remember { mutableStateOf(false) }
+    val isUserLoggedIn by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         isBackgroundLoaded = true
@@ -101,16 +102,18 @@ fun SettingsItems(navController: NavController, items: List<Triple<String, Strin
             .fillMaxWidth()
             .padding(horizontal = 40.dp, vertical = 20.dp)
     ) {
-
         items.forEachIndexed { index, (item, label, icon) ->
-            SettingsItem(navController,index, item, label, icon)
+            SettingsItem(navController,item, label)
+            if (index < items.size - 1) {
+                Divider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), thickness = 1.dp)
+            }
         }
     }
 }
 
 @Composable
-fun SettingsItem(navController: NavController, index: Int, item: String, label: String, icon: ImageVector) {
-    Box(
+fun SettingsItem(navController: NavController, item: String, label: String) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = {
@@ -124,20 +127,15 @@ fun SettingsItem(navController: NavController, index: Int, item: String, label: 
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = item,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(25.dp)
-            )
+
             Text(
                 text = item,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 30.sp,
+                fontSize = 20.sp,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 16.dp)
+                    .padding(start = 10.dp)
             )
             Icon(
                 imageVector = Icons.Rounded.KeyboardArrowRight,
@@ -145,9 +143,6 @@ fun SettingsItem(navController: NavController, index: Int, item: String, label: 
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(30.dp).padding(top = 5.dp)
             )
-        }
-        if (index > 0) {
-            Divider(color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.fillMaxWidth())
         }
     }
 }

@@ -300,7 +300,7 @@ fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerSta
 fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
     Scaffold(
         topBar = {
-            TopBar(drawerState, scope)
+            TopBar(navController, drawerState, scope)
         },
         bottomBar = {
             BottomAppBar(navController)
@@ -316,7 +316,7 @@ fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: N
 }
 
 @Composable
-fun TopBar(drawerState: DrawerState, scope: CoroutineScope) {
+fun TopBar(navController: NavController, drawerState: DrawerState, scope: CoroutineScope) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -326,7 +326,7 @@ fun TopBar(drawerState: DrawerState, scope: CoroutineScope) {
         IconButton(onClick = { scope.launch { drawerState.open() } }) {
             Icon(Icons.Rounded.Menu, contentDescription = "menu", modifier = Modifier.size(32.dp))
         }
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { navController.navigate("account") }) {
             Icon(Icons.Rounded.AccountCircle, contentDescription = "avatar", modifier = Modifier.size(36.dp))
         }
     }
