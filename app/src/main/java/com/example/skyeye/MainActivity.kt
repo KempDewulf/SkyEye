@@ -132,7 +132,17 @@ class MainActivity : ComponentActivity() {
                             val icao = backStackEntry.arguments?.getString("icao")
                             val airportName = backStackEntry.arguments?.getString("airportName")
                             if (icao != null && airportName != null) {
-                                AirportDetailScreen(icao, airportName, navController = navController)
+                                AircraftDetailScreen(icao, navController = navController)
+                            }
+                        }
+                        composable(
+                            route = "AircraftDetailScreen/{aircraftType}",
+                            arguments = listOf(
+                                navArgument("aircraftType") { type = NavType.StringType },
+                            )
+                        ) { backStackEntry ->
+                            backStackEntry.arguments?.getString("aircraftType")?.let { aircraftType ->
+                                AircraftDetailScreen(aircraftType, navController = navController)
                             }
                         }
                     }
