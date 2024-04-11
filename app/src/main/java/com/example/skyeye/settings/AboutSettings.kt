@@ -70,6 +70,9 @@ fun AboutSettingsItems(navController: NavController, items: List<String>) {
 
         items.forEachIndexed { index, item ->
             AboutSettingsItem(navController,index, item)
+            if (index < items.size - 1) {
+                Divider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), thickness = 1.dp)
+            }
         }
     }
 }
@@ -89,9 +92,6 @@ fun AboutSettingsItem(navController: NavController, index: Int, item: String) {
             )
     ) {
         SettingsItemRow(item = item, isClickable = isClickable)
-        if (index > 0) {
-            Divider(color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.fillMaxWidth())
-        }
     }
 }
 
@@ -116,7 +116,8 @@ fun SettingsItemRow(item: String, isClickable: Boolean) {
 fun BuildVersionItem(item: String) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(top = 3.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -124,20 +125,20 @@ fun BuildVersionItem(item: String) {
             text = item,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 30.sp,
+            fontSize = 20.sp,
             modifier = Modifier
-                .weight(2f)
-                .padding(start = 16.dp)
+                .weight(1f)
+                .padding(start = 10.dp)
         )
         Text(
             text = buildVersion,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.End,
-            fontSize = 30.sp,
+            fontSize = 20.sp,
             modifier = Modifier
                 .weight(1f)
-                .padding(end = 16.dp)
+                .padding(end = 10.dp)
 
         )
     }
@@ -155,17 +156,17 @@ fun RegularSettingsItem(item: String, isClickable: Boolean) {
             text = item,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 30.sp,
+            fontSize = 20.sp,
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 16.dp)
+                .padding(start = 10.dp)
         )
         if (isClickable) {
             Icon(
                 imageVector = Icons.Rounded.KeyboardArrowRight,
                 contentDescription = "End Icon",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp).padding(top = 5.dp)
             )
         }
     }

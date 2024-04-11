@@ -1,9 +1,5 @@
 package com.example.skyeye.settings
 
-import android.provider.ContactsContract.CommonDataKinds.Email
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,11 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Done
-import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
@@ -73,6 +64,7 @@ fun SupportForm() {
                 text = "Thank you for your message, we will get back to you as soon as possible!",
                 fontSize = 30.sp,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                lineHeight = 40.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 70.dp)
             )
             Icon(
@@ -110,7 +102,7 @@ fun SupportTexts() {
 
 @Composable
 fun SupportTextField(value: String, onValueChange: (String) -> Unit, label: String, minLines: Int = 1) {
-    val keyboardType = if (value == "Email") KeyboardType.Email else KeyboardType.Text
+    val keyboardType = if (label == "Email") KeyboardType.Email else KeyboardType.Text
     TextField(
         value = value,
         onValueChange = onValueChange,

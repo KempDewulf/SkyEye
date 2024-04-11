@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -40,6 +41,7 @@ import androidx.navigation.NavController
 @Composable
 fun SettingsScreen(navController: NavController) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
+    val isUserLoggedIn by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         isBackgroundLoaded = true
@@ -47,10 +49,11 @@ fun SettingsScreen(navController: NavController) {
 
     if (isBackgroundLoaded) {
         val items = listOf(
-            Pair("Account", Icons.Rounded.AccountCircle),
-            Pair("Appearance", Icons.Rounded.Star),
-            Pair("Support", Icons.Rounded.Build),
-            Pair("About", Icons.Rounded.Info)
+            if (isUserLoggedIn) Triple("Account", "account",Icons.Rounded.AccountCircle)
+            else Triple("Login or Sign up", "login" ,Icons.Rounded.AccountCircle),
+            Triple("Appearance", "appearance",Icons.Rounded.Star),
+            Triple("Support", "support",Icons.Rounded.Build),
+            Triple("About", "about",Icons.Rounded.Info)
         )
 
         Column(
@@ -93,26 +96,28 @@ fun SettingsTopBar(navController: NavController, title: String = "Settings") {
 }
 
 @Composable
-fun SettingsItems(navController: NavController, items: List<Pair<String, ImageVector>>) {
+fun SettingsItems(navController: NavController, items: List<Triple<String, String, ImageVector>>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 40.dp, vertical = 20.dp)
     ) {
-
-        items.forEachIndexed { index, (item, icon) ->
-            SettingsItem(navController,index, item, icon)
+        items.forEachIndexed { index, (item, label, icon) ->
+            SettingsItem(navController,item, label)
+            if (index < items.size - 1) {
+                Divider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), thickness = 1.dp)
+            }
         }
     }
 }
 
 @Composable
-fun SettingsItem(navController: NavController, index: Int, item: String, icon: ImageVector) {
-    Box(
+fun SettingsItem(navController: NavController, item: String, label: String) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = {
-                navController.navigate(item.lowercase());
+                navController.navigate(label)
             })
     ) {
         Row(
@@ -122,30 +127,22 @@ fun SettingsItem(navController: NavController, index: Int, item: String, icon: I
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = item,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(25.dp)
-            )
+
             Text(
                 text = item,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 30.sp,
+                fontSize = 20.sp,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 16.dp)
+                    .padding(start = 10.dp)
             )
             Icon(
                 imageVector = Icons.Rounded.KeyboardArrowRight,
                 contentDescription = "End Icon",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp).padding(top = 5.dp)
             )
-        }
-        if (index > 0) {
-            Divider(color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.fillMaxWidth())
         }
     }
 }

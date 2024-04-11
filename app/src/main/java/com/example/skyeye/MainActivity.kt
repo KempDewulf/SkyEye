@@ -41,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +76,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 var buildVersion = "0.2.0"
+val localTheme = compositionLocalOf { false }
 
 class MainActivity : ComponentActivity() {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -313,7 +315,7 @@ fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerSta
 fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
     Scaffold(
         topBar = {
-            TopBar(drawerState, scope)
+            TopBar(navController, drawerState, scope)
         },
         bottomBar = {
             BottomAppBar(navController)
@@ -329,7 +331,7 @@ fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: N
 }
 
 @Composable
-fun TopBar(drawerState: DrawerState, scope: CoroutineScope) {
+fun TopBar(navController: NavController, drawerState: DrawerState, scope: CoroutineScope) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -339,7 +341,7 @@ fun TopBar(drawerState: DrawerState, scope: CoroutineScope) {
         IconButton(onClick = { scope.launch { drawerState.open() } }) {
             Icon(Icons.Rounded.Menu, contentDescription = "menu", modifier = Modifier.size(32.dp))
         }
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { navController.navigate("account") }) {
             Icon(Icons.Rounded.AccountCircle, contentDescription = "avatar", modifier = Modifier.size(36.dp))
         }
     }
