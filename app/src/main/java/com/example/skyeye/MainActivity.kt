@@ -1,7 +1,9 @@
 package com.example.skyeye
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -41,9 +43,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -58,6 +62,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -72,6 +77,8 @@ import com.example.skyeye.settings.AppearanceSettingsScreen
 import com.example.skyeye.settings.SettingsScreen
 import com.example.skyeye.settings.SupportSettingsScreen
 import androidx.navigation.navArgument
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -325,7 +332,9 @@ fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: N
         MapView(
             modifier = Modifier.padding(paddingValues),
             latitude = 50.5,
-            longitude = 4.47
+            longitude = 4.47,
+            context = LocalContext.current,
+            showAirports = true
         )
     }
 }
@@ -380,8 +389,16 @@ fun MapView(
     showCompass: Boolean = true,
     userInteractionEnabled: Boolean = true,
     zoomValue: Double = 3.5,
-    styleUrl: String = "https://api.maptiler.com/maps/basic-v2/style.json"
+    styleUrl: String = "https://api.maptiler.com/maps/basic-v2/style.json",
+    context: Context,
+    showAirports: Boolean = false
 ) {
+    val airportData = remember { mutableStateOf<List<AirportMarkerData>?>(null) }
+
+    LaunchedEffect(Unit) {
+        airportData.value = readAirportData(context)
+    }
+
     AndroidView(
         modifier = modifier,
         factory = { context ->
@@ -406,9 +423,40 @@ fun MapView(
                         .zoom(zoomValue)
                         .bearing(2.0)
                         .build()
+
+                    if (showAirports) {
+                        val symbolManager = SymbolManager(mapView, map, it)
+
+                        for (airport in airportData.value ?: emptyList()) {
+                            val symbolOptions = SymbolOptions()
+                                .withLatLng(LatLng(airport.latitude, airport.longitude))
+                                .withTextField(airport.name)
+
+                            symbolManager.create(symbolOptions)
+                        }
+                    }
                 }
             }
             mapView
         }
     )
 }
+
+fun readAirportData(context: Context): List<AirportMarkerData> {
+    val airportData = mutableListOf<AirportMarkerData>()
+    val inputStream = context.assets.open("airports.csv")
+    val reader = inputStream.bufferedReader()
+    reader.readLine()
+    reader.forEachLine { line ->
+        val fields = line.split(",")
+        val latitude = fields[4].toDoubleOrNull()
+        val longitude = fields[5].toDoubleOrNull()
+        val name = fields[3]
+        if (latitude != null && longitude != null) {
+            airportData.add(AirportMarkerData(name, latitude, longitude))
+        }
+    }
+    return airportData
+}
+
+data class AirportMarkerData(val name: String, val latitude: Double, val longitude: Double)
