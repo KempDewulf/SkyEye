@@ -36,7 +36,6 @@ import com.example.skyeye.apirequest.ui.APIViewModel
 @Composable
 fun AircraftDetailScreen(aircraftType: String, navController: NavController) {
     val apiViewModel: APIViewModel = viewModel()
-    val apiUiState : APIUiState = apiViewModel.apiUiState
 
     /*LaunchedEffect(key1 = aircraftType) {
         apiViewModel.getAircraftData(aircraftType)
