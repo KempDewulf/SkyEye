@@ -181,7 +181,7 @@ class MainActivity : ComponentActivity() {
                 Manifest.permission.CAMERA
             ) -> {
                 // Camera permission already granted, navigate to camera screen
-                CameraScreen()
+                CameraScreen(navController)
             }
             else -> {
                 // Request camera permission

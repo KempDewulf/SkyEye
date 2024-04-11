@@ -2,6 +2,7 @@ package com.example.skyeye
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Icon
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -14,15 +15,21 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -42,15 +49,17 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.NavController
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-@SuppressLint("ClickableViewAccessibility")
 @Composable
-fun CameraScreen() {
+fun CameraScreen(navController: NavController) {
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -65,43 +74,82 @@ fun CameraScreen() {
     var camera by remember { mutableStateOf<Camera?>(null) }
 
     LaunchedEffect(lensFacing) {
-        val cameraProvider = context.getCameraProvider()
-        cameraProvider.unbindAll()
-        camera = cameraProvider.bindToLifecycle(lifecycleOwner, cameraxSelector, preview, imageCapture)
+        camera = initializeCamera(context, lifecycleOwner, cameraxSelector, preview, imageCapture)
         preview.setSurfaceProvider(previewView.surfaceProvider)
     }
 
-    val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        override fun onScale(detector: ScaleGestureDetector): Boolean {
-            // Get the camera's current zoom ratio
-            val currentZoomRatio = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0F
-
-            // Get the pinch gesture's scaling factor
-            val delta = detector.scaleFactor
-
-            // Update the camera's zoom ratio. This is an asynchronous operation that returns
-            // a ListenableFuture, allowing you to listen to when the operation completes.
-            camera?.cameraControl?.setZoomRatio(currentZoomRatio * delta)
-
-            // Return true, as the event was handled
-            return true
-        }
-    }
-    val scaleGestureDetector = ScaleGestureDetector(context, listener)
-    previewView.setOnTouchListener { _, event ->
-        scaleGestureDetector.onTouchEvent(event)
-        return@setOnTouchListener true
-    }
+    val scaleGestureDetector = initializeScaleGestureDetector(context, camera)
+    setTouchListener(previewView, scaleGestureDetector)
 
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
         AndroidView(
             { previewView },
             modifier = Modifier.fillMaxSize()
         )
+        CameraTopBar(navController)
         camera?.let { ZoomSlider(it.cameraControl) }
-
         InfoTypeToggle()
     }
+}
+
+private suspend fun initializeCamera(
+    context: Context,
+    lifecycleOwner: LifecycleOwner,
+    cameraxSelector: CameraSelector,
+    preview: Preview,
+    imageCapture: ImageCapture
+): Camera {
+    val cameraProvider = context.getCameraProvider()
+    cameraProvider.unbindAll()
+    return cameraProvider.bindToLifecycle(lifecycleOwner, cameraxSelector, preview, imageCapture)
+}
+
+private fun initializeScaleGestureDetector(context: Context, camera: Camera?): ScaleGestureDetector {
+    val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val currentZoomRatio = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0F
+            val delta = detector.scaleFactor
+
+            camera?.cameraControl?.setZoomRatio(currentZoomRatio * delta)
+            return true
+        }
+    }
+    return ScaleGestureDetector(context, listener)
+}
+
+private fun setTouchListener(view: View, scaleGestureDetector: ScaleGestureDetector) {
+    view.setOnTouchListener { v, event ->
+        val wasEventHandled = scaleGestureDetector.onTouchEvent(event)
+        if (event.action == MotionEvent.ACTION_UP && !wasEventHandled) {
+            v.performClick()
+        }
+        return@setOnTouchListener true
+    }
+}
+
+@Composable
+fun BoxScope.CameraTopBar(navController: NavController) {
+    IconButton(
+        onClick = { navController.popBackStack() },
+        modifier = Modifier
+            .align(Alignment.TopStart)
+            .padding(16.dp)
+            .size(45.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Close,
+            contentDescription = "close",
+            modifier = Modifier.size(45.dp)
+        )
+    }
+    Image(
+        painter = painterResource(id = R.drawable.logowithname),
+        contentDescription = "SkyEye",
+        modifier = Modifier
+            .align(Alignment.TopCenter)
+            .offset(y = (-40).dp)
+            .size(150.dp)
+    )
 }
 
 @Composable
