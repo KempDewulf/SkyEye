@@ -105,6 +105,9 @@ class MainActivity : ComponentActivity() {
                         composable("register") {
                             LoginAndRegisterScreen(navController = navController, true, isDarkMode)
                         }
+                        composable("forgotPassword") {
+                            ForgotPasswordScreen(navController = navController, isDarkMode)
+                        }
                         composable("seeAllAircraftTypes") {
                             AircraftsScreen(navController)
                         }

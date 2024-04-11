@@ -154,7 +154,7 @@ fun LoginAndRegisterScreen(navController: NavController, isRegister: Boolean, is
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        TextButton(onClick = { /*TODO*/ }) {
+                        TextButton(onClick = { navController.navigate("forgotPassword")}) {
                             Text(text = "Forgot password?")
                         }
                     }
