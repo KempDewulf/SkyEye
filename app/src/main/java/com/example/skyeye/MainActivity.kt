@@ -8,10 +8,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresExtension
-import androidx.compose.foundation.layout.Column
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -43,26 +43,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.example.skyeye.ui.theme.SkyEyeTheme
-import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.camera.CameraPosition
-import com.mapbox.mapboxsdk.geometry.LatLng
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -70,19 +66,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgs
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.skyeye.settings.AboutSettingsScreen
 import com.example.skyeye.settings.AccountSettingsScreen
 import com.example.skyeye.settings.AppearanceSettingsScreen
 import com.example.skyeye.settings.SettingsScreen
 import com.example.skyeye.settings.SupportSettingsScreen
-import androidx.navigation.navArgument
+import com.example.skyeye.ui.theme.SkyEyeTheme
+import com.mapbox.mapboxsdk.Mapbox
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import android.Manifest
 
 var buildVersion = "0.2.0"
-val localTheme = compositionLocalOf { false }
 
 class MainActivity : ComponentActivity() {
     private val cameraPermissionRequest =
@@ -98,8 +97,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            SkyEyeTheme {
-                navController = rememberNavController()
+            SkyEyeTheme(darkTheme = isDarkMode) {
+                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -114,10 +113,13 @@ class MainActivity : ComponentActivity() {
                             Drawer(navController = navController)
                         }
                         composable("login") {
-                            LoginAndRegisterScreen(navController = navController, false)
+                            LoginAndRegisterScreen(navController = navController, false, isDarkMode)
                         }
                         composable("register") {
-                            LoginAndRegisterScreen(navController = navController, true)
+                            LoginAndRegisterScreen(navController = navController, true, isDarkMode)
+                        }
+                        composable("forgotPassword") {
+                            ForgotPasswordScreen(navController = navController, isDarkMode)
                         }
                         composable("camera") {
                             OpenCamera(navController)
@@ -136,7 +138,7 @@ class MainActivity : ComponentActivity() {
                                 AccountSettingsScreen(navController)
                             }
                             composable("appearance") {
-                                AppearanceSettingsScreen(navController)
+                                AppearanceSettingsScreen(navController, isDarkMode) { isDarkMode = it }
                             }
                             composable("support") {
                                 SupportSettingsScreen(navController)

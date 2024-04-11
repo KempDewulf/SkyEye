@@ -1,6 +1,7 @@
 package com.example.skyeye
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,31 +21,46 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.skyeye.apirequest.ui.APIUiState
-import com.example.skyeye.apirequest.ui.APIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.skyeye.apirequest.ui.APIUiState
+import com.example.skyeye.apirequest.ui.APIUiStateAirportApiData
+import com.example.skyeye.apirequest.ui.APIViewModel
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun AirportDetailScreen(icao: String, airportName: String, navController: NavController) {
     val apiViewModel: APIViewModel = viewModel()
-    val apiUiState : APIUiState = apiViewModel.apiUiState
+    val apiUiState : APIUiStateAirportApiData = apiViewModel.apiUiState
+    var details = emptyList<Pair<String, Any>>()
 
-    /*LaunchedEffect(key1 = icao) {
+    LaunchedEffect(key1 = icao) {
         apiViewModel.getAirportData(icao)
-    }*/
+    }
 
-    /*when(apiUiState)
-        {
-            is APIUiState.Success -> Text(text = apiUiState.data, style = MaterialTheme.typography.bodyMedium)
-            is APIUiState.Loading -> Text(text = "Airport information loading...", style = MaterialTheme.typography.bodyMedium)
-            is APIUiState.Error -> Text(text = "Couldn't find the airport data, try again later!")
-        }*/
+    when(apiUiState) {
+        is APIUiStateAirportApiData.Success -> {
+            val airportData = apiUiState.data
+            Log.d("airportdata", airportData.toString())
+            details = listOf(
+                "ICAO Code" to airportData.ident,
+                "IATA Code" to airportData.iata_code,
+                "Continent" to airportData.continent,
+                "Municipality" to airportData.municipality,
+                "Location" to airportData.country.name,
+                "Runway Count" to airportData.runways.size,
+                "Elevation" to airportData.elevation_ft,
+                "Coordinates" to "${airportData.latitude_deg} ${airportData.longitude_deg}"
+            )
+        }
+        is APIUiStateAirportApiData.Loading -> Text(text = "Airport information loading...", style = MaterialTheme.typography.bodyMedium)
+        is APIUiStateAirportApiData.Error -> Text(text = "Couldn't find the airport data, try again later!")
+    }
 
     Column(
         modifier = Modifier
@@ -83,18 +99,6 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
                 Section(title = airportName) {}
             }
 
-            val details = listOf(
-                "ICAO Code" to "OABT", //VARIABLE VALUE
-                "IATA Code" to "BST", //VARIABLE VALUE
-                "ICAO Region" to "APAC", //VARIABLE VALUE
-                "ICAO Territory" to "Afghanistan", //VARIABLE VALUE
-                "Location" to "Lashkar Gah, Helmand", //VARIABLE VALUE
-                "Serving" to "Lashkar Gah", //VARIABLE VALUE
-                "Elevation" to "2464 ft", //VARIABLE VALUE
-                "Coordinates" to "31° 33' 37\" N , 64° 21' 53\" E", //VARIABLE VALUE
-                "KCC" to "Bwh" //VARIABLE VALUE
-            )
-
             items(details) { detail ->
                 TitleValueComponent(title = detail.first, value = detail.second)
             }
@@ -130,7 +134,7 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
 }
 
 @Composable
-fun TitleValueComponent(title: String, value: String) {
+fun TitleValueComponent(title: String, value: Any) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
@@ -138,7 +142,7 @@ fun TitleValueComponent(title: String, value: String) {
         modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 5.dp)
     )
     Text(
-        text = value,
+        text = value.toString(),
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 12.dp)
@@ -157,3 +161,118 @@ fun Section(title: String, content: @Composable () -> Unit) {
         content()
     }
 }
+
+data class AirportApiData(
+    val ident: String,
+    val type: String,
+    val name: String,
+    val latitude_deg: Float,
+    val longitude_deg: Float,
+    val elevation_ft: String,
+    val continent: String,
+    val iso_country: String,
+    val iso_region: String,
+    val municipality: String,
+    val scheduled_service: String,
+    val gps_code: String,
+    val iata_code: String,
+    val local_code: String,
+    val home_link: String,
+    val wikipedia_link: String,
+    val keywords: String,
+    val icao_code: String,
+    val runways: List<Runway>,
+    val freqs: List<Freq>,
+    val country: Country,
+    val region: Region,
+    val navaids: List<Navaid>,
+    val updatedAt: String,
+    val station: Station
+)
+
+data class Runway(
+    val id: String,
+    val airport_ref: String,
+    val airport_ident: String,
+    val length_ft: String,
+    val width_ft: String,
+    val surface: String,
+    val lighted: String,
+    val closed: String,
+    val le_ident: String,
+    val le_latitude_deg: String,
+    val le_longitude_deg: String,
+    val le_elevation_ft: String,
+    val le_heading_degT: String,
+    val le_displaced_threshold_ft: String,
+    val he_ident: String,
+    val he_latitude_deg: String,
+    val he_longitude_deg: String,
+    val he_elevation_ft: String,
+    val he_heading_degT: String,
+    val he_displaced_threshold_ft: String,
+    val he_ils: Ils,
+    val le_ils: Ils
+)
+
+data class Ils(
+    val freq: Float,
+    val course: Int
+)
+
+data class Freq(
+    val id: String,
+    val airport_ref: String,
+    val airport_ident: String,
+    val type: String,
+    val description: String,
+    val frequency_mhz: String
+)
+
+data class Country(
+    val id: String,
+    val code: String,
+    val name: String,
+    val continent: String,
+    val wikipedia_link: String,
+    val keywords: String
+)
+
+data class Region(
+    val id: String,
+    val code: String,
+    val local_code: String,
+    val name: String,
+    val continent: String,
+    val iso_country: String,
+    val wikipedia_link: String,
+    val keywords: String
+)
+
+data class Navaid(
+    val id: String,
+    val filename: String,
+    val ident: String,
+    val name: String,
+    val type: String,
+    val frequency_khz: String,
+    val latitude_deg: String,
+    val longitude_deg: String,
+    val elevation_ft: String,
+    val iso_country: String,
+    val dme_frequency_khz: String,
+    val dme_channel: String,
+    val dme_latitude_deg: String,
+    val dme_longitude_deg: String,
+    val dme_elevation_ft: String,
+    val slaved_variation_deg: String,
+    val magnetic_variation_deg: String,
+    val usageType: String,
+    val power: String,
+    val associated_airport: String
+)
+
+data class Station(
+    val icao_code: String,
+    val distance: Int
+)

@@ -8,36 +8,47 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.skyeye.AirportApiData
+import com.example.skyeye.AirportData
 import com.example.skyeye.apirequest.network.skyEyeApi
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-sealed interface APIUiState {
-    data class Success(val data: String) : APIUiState
-    object Error : APIUiState
-    object Loading : APIUiState
+sealed class APIUiState {
+    object Loading : APIUiState()
+    data class Success(val data: AirportData) : APIUiState()
+    object Error : APIUiState()
 }
 
-@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+sealed class APIUiStateAirportData {
+    object Loading : APIUiStateAirportData()
+    data class Success(val data: AirportData) : APIUiStateAirportData()
+    object Error : APIUiStateAirportData()
+}
+
+sealed class APIUiStateAirportApiData {
+    object Loading : APIUiStateAirportApiData()
+    data class Success(val data: AirportApiData) : APIUiStateAirportApiData()
+    object Error : APIUiStateAirportApiData()
+}
+
 class APIViewModel : ViewModel() {
-    var apiUiState: APIUiState by mutableStateOf(APIUiState.Loading)
+    var apiUiState: APIUiStateAirportApiData by mutableStateOf(APIUiStateAirportApiData.Loading)
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun getAirportData(icao: String) {
         viewModelScope.launch {
-            apiUiState = APIUiState.Loading
+            apiUiState = APIUiStateAirportApiData.Loading
             apiUiState = try {
                 val result = skyEyeApi.retrofitService.getAirportData(icao)
-                APIUiState.Success(
-                    "${result.toString()}"
-                )
+                APIUiStateAirportApiData.Success(result)
             } catch (e: IOException) {
                 Log.e("ERROR", "${e.message}");
-                APIUiState.Error
+                APIUiStateAirportApiData.Error
             } catch (e: HttpException) {
                 Log.e("HTTP ERROR", "${e.message}");
-                APIUiState.Error
+                APIUiStateAirportApiData.Error
             }
         }
     }
