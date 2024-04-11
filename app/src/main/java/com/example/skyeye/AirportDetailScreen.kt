@@ -24,10 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.skyeye.apirequest.ui.APIUiState
-import com.example.skyeye.apirequest.ui.APIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.skyeye.apirequest.ui.APIUiState
+import com.example.skyeye.apirequest.ui.APIViewModel
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
