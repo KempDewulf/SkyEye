@@ -1,10 +1,12 @@
 package com.example.skyeye
 
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Column
 import androidx.compose.animation.EnterTransition
@@ -60,11 +62,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgs
 import androidx.navigation.navigation
 import com.example.skyeye.settings.AboutSettingsScreen
 import com.example.skyeye.settings.AccountSettingsScreen
@@ -74,23 +79,33 @@ import com.example.skyeye.settings.SupportSettingsScreen
 import androidx.navigation.navArgument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import android.Manifest
 
 var buildVersion = "0.2.0"
 val localTheme = compositionLocalOf { false }
 
 class MainActivity : ComponentActivity() {
+    private val cameraPermissionRequest =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                navController.navigate("camera")
+            } else {
+                // Camera permission denied
+            }
+        }
+    private lateinit var navController: NavController
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SkyEyeTheme {
-                val navController = rememberNavController()
+                navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     NavHost(
-                        navController = navController,
+                        navController = navController as NavHostController,
                         startDestination = "home",
                         enterTransition = {EnterTransition.None},
                         exitTransition = {ExitTransition.None}
@@ -103,6 +118,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("register") {
                             LoginAndRegisterScreen(navController = navController, true)
+                        }
+                        composable("camera") {
+                            OpenCamera(navController)
                         }
                         composable("seeAllAircraftTypes") {
                             AircraftsScreen(navController)
@@ -155,7 +173,25 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    @Composable
+    private fun OpenCamera(navController: NavController) {
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) -> {
+                // Camera permission already granted, navigate to camera screen
+                CameraScreen()
+            }
+            else -> {
+                // Request camera permission
+                cameraPermissionRequest.launch(Manifest.permission.CAMERA)
+            }
+        }
+    }
 }
+
+
 
 @Composable
 fun Drawer(navController: NavController) {
