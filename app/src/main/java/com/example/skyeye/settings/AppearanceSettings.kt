@@ -1,12 +1,18 @@
 package com.example.skyeye.settings
 
+import android.widget.ToggleButton
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +25,7 @@ import androidx.navigation.NavController
 @Composable
 fun AppearanceSettingsScreen(navController: NavController) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
+    var isDarkMode by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         isBackgroundLoaded = true
@@ -32,7 +39,13 @@ fun AppearanceSettingsScreen(navController: NavController) {
                 .fillMaxSize()
         ) {
             SettingsTopBar(navController, "Appearance settings")
-
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(text = "Darkmode")
+                Switch(checked = isDarkMode, onCheckedChange = { isDarkMode = it })
+            }
         }
     }
 }
