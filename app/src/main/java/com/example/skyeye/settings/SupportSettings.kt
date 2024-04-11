@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,7 +64,7 @@ fun SupportForm() {
             Text(
                 text = "Thank you for your message, we will get back to you as soon as possible!",
                 fontSize = 30.sp,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                textAlign = TextAlign.Center,
                 lineHeight = 40.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 70.dp)
             )
