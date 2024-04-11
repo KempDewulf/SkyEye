@@ -100,10 +100,10 @@ class MainActivity : ComponentActivity() {
                             Drawer(navController = navController)
                         }
                         composable("login") {
-                            LoginAndRegisterScreen(navController = navController, false)
+                            LoginAndRegisterScreen(navController = navController, false, isDarkMode)
                         }
                         composable("register") {
-                            LoginAndRegisterScreen(navController = navController, true)
+                            LoginAndRegisterScreen(navController = navController, true, isDarkMode)
                         }
                         composable("seeAllAircraftTypes") {
                             AircraftsScreen(navController)
