@@ -79,7 +79,13 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import android.Manifest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import com.howest.skyeye.workers.ReminderWorker
 import howest.nma.skyeye.R
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import java.util.concurrent.TimeUnit
 
 var buildVersion = "0.2.0"
 
@@ -97,6 +103,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val reminderWorkRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
+                .setInitialDelay(1, TimeUnit.DAYS)
+                .build()
+
+            WorkManager.getInstance(applicationContext).enqueue(reminderWorkRequest)
+
             var isDarkMode by remember { mutableStateOf(false) }
             SkyEyeTheme(darkTheme = isDarkMode) {
                 navController = rememberNavController()
