@@ -79,6 +79,7 @@ import com.example.skyeye.settings.SupportSettingsScreen
 import androidx.navigation.navArgument
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import howest.nma.skyeye.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -430,7 +431,7 @@ fun MapView(
                         for (airport in airportData.value ?: emptyList()) {
                             val symbolOptions = SymbolOptions()
                                 .withLatLng(LatLng(airport.latitude, airport.longitude))
-                                .withTextField(airport.name)
+                                .withTextField(airport.latitude.toString())
 
                             symbolManager.create(symbolOptions)
                         }
