@@ -79,6 +79,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import android.Manifest
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import com.howest.skyeye.workers.ReminderWorker
@@ -104,10 +105,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val reminderWorkRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
-                .setInitialDelay(1, TimeUnit.DAYS)
+                .setInitialDelay(2, TimeUnit.DAYS)
                 .build()
 
-            WorkManager.getInstance(applicationContext).enqueue(reminderWorkRequest)
+            WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+                "skyEyeReminder",
+                ExistingWorkPolicy.REPLACE,
+                reminderWorkRequest
+            )
 
             var isDarkMode by remember { mutableStateOf(false) }
             SkyEyeTheme(darkTheme = isDarkMode) {
