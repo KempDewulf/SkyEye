@@ -1,5 +1,12 @@
 package com.howest.skyeye.settings
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.view.Gravity
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,13 +28,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.res.TypedArrayUtils.getText
 import androidx.navigation.NavController
+import howest.nma.skyeye.R
 
 @Composable
 fun SupportSettingsScreen(navController: NavController) {
@@ -66,7 +77,9 @@ fun SupportForm() {
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
                 lineHeight = 40.sp,
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 70.dp)
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 70.dp)
             )
             Icon(
                 imageVector = Icons.Rounded.Done,
@@ -132,14 +145,33 @@ fun SupportButton(isEnabled: Boolean, onClick: () -> Unit) {
 }
 @Composable
 fun SupportEmail() {
+    val context = LocalContext.current
+    var toast: Toast? = null
+    val email = stringResource(id = R.string.support_email)
+
     Text(
         text = "You can also reach us by email at",
         fontSize = 18.sp,
     )
     Text(
-        text = "support@skyeye.com",
+        text = email,
         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
         fontSize = 20.sp,
-        style = TextStyle(textDecoration = TextDecoration.Underline)
+        style = TextStyle(textDecoration = TextDecoration.Underline),
+        modifier = Modifier.clickable {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:$email")
+            }
+            try {
+                context.startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                if (toast == null) {
+                    toast = Toast.makeText(context, "No email app available", Toast.LENGTH_SHORT)
+                    toast?.setGravity(Gravity.TOP, 0, 0)
+                }
+                toast?.show()
+            }
+
+        }
     )
 }
