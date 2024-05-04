@@ -69,8 +69,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
-import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
 import howest.nma.skyeye.R
 import androidx.navigation.navigation
 import com.howest.skyeye.settings.AboutSettingsScreen
@@ -85,6 +83,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import android.Manifest
+import android.app.UiModeManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.work.ExistingWorkPolicy
@@ -95,11 +94,7 @@ import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.style.expressions.Expression
-import com.mapbox.mapboxsdk.style.layers.CircleLayer
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleBlur
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textAllowOverlap
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField
@@ -126,6 +121,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+            var isDarkMode by remember { mutableStateOf(uiModeManager.nightMode == UiModeManager.MODE_NIGHT_YES) }
             val reminderWorkRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
                 .setInitialDelay(2, TimeUnit.DAYS)
                 .build()
@@ -136,7 +133,6 @@ class MainActivity : ComponentActivity() {
                 reminderWorkRequest
             )
 
-            var isDarkMode by remember { mutableStateOf(false) }
             SkyEyeTheme(darkTheme = isDarkMode) {
                 navController = rememberNavController()
                 Surface(
