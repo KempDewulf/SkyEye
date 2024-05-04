@@ -87,6 +87,7 @@ import kotlinx.coroutines.launch
 import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.howest.skyeye.workers.ReminderWorker
 import androidx.work.WorkManager
@@ -126,10 +127,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val reminderWorkRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
-                .setInitialDelay(1, TimeUnit.DAYS)
+                .setInitialDelay(2, TimeUnit.DAYS)
                 .build()
 
-            WorkManager.getInstance(applicationContext).enqueue(reminderWorkRequest)
+            WorkManager.getInstance(applicationContext).enqueueUniqueWork(
+                "skyEyeReminder",
+                ExistingWorkPolicy.REPLACE,
+                reminderWorkRequest
+            )
 
             var isDarkMode by remember { mutableStateOf(false) }
             SkyEyeTheme(darkTheme = isDarkMode) {
