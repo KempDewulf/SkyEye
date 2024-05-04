@@ -29,13 +29,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.res.TypedArrayUtils.getText
 import androidx.navigation.NavController
+import howest.nma.skyeye.R
 
 @Composable
 fun SupportSettingsScreen(navController: NavController) {
@@ -74,7 +77,9 @@ fun SupportForm() {
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
                 lineHeight = 40.sp,
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 70.dp)
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(vertical = 70.dp)
             )
             Icon(
                 imageVector = Icons.Rounded.Done,
@@ -140,9 +145,9 @@ fun SupportButton(isEnabled: Boolean, onClick: () -> Unit) {
 }
 @Composable
 fun SupportEmail() {
-    val email = "support@skyeye.com"
     val context = LocalContext.current
     var toast: Toast? = null
+    val email = stringResource(id = R.string.support_email)
 
     Text(
         text = "You can also reach us by email at",
@@ -161,7 +166,7 @@ fun SupportEmail() {
                 context.startActivity(intent)
             } catch (e: ActivityNotFoundException) {
                 if (toast == null) {
-                    toast = Toast.makeText(context, "No email client available", Toast.LENGTH_SHORT)
+                    toast = Toast.makeText(context, "No email app available", Toast.LENGTH_SHORT)
                     toast?.setGravity(Gravity.TOP, 0, 0)
                 }
                 toast?.show()
