@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "howest.nma.skyeye"
+    namespace = "com.example.skyeye"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "howest.nma.skyeye"
+        applicationId = "com.example.skyeye"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
