@@ -1,5 +1,6 @@
 package com.howest.skyeye
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -43,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +55,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -66,6 +69,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import howest.nma.skyeye.R
 import androidx.navigation.navigation
 import com.howest.skyeye.settings.AboutSettingsScreen
 import com.howest.skyeye.settings.AccountSettingsScreen
@@ -79,13 +85,29 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import android.Manifest
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
 import com.howest.skyeye.workers.ReminderWorker
-import howest.nma.skyeye.R
-import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.style.expressions.Expression
+import com.mapbox.mapboxsdk.style.layers.CircleLayer
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleBlur
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textAllowOverlap
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textIgnorePlacement
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textSize
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer
+import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import java.util.concurrent.TimeUnit
 
 var buildVersion = "0.2.0"
@@ -376,7 +398,9 @@ fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: N
         MapView(
             modifier = Modifier.padding(paddingValues),
             latitude = 50.5,
-            longitude = 4.47
+            longitude = 4.47,
+            context = LocalContext.current,
+            showAirports = true
         )
     }
 }
@@ -431,8 +455,16 @@ fun MapView(
     showCompass: Boolean = true,
     userInteractionEnabled: Boolean = true,
     zoomValue: Double = 3.5,
-    styleUrl: String = "https://api.maptiler.com/maps/basic-v2/style.json"
+    styleUrl: String = "https://api.maptiler.com/maps/basic-v2/style.json",
+    context: Context,
+    showAirports: Boolean = false
 ) {
+    val airportData = remember { mutableStateOf<List<AirportMarkerData>?>(null) }
+
+    LaunchedEffect(Unit) {
+        airportData.value = readAirportData(context)
+    }
+
     AndroidView(
         modifier = modifier,
         factory = { context ->
@@ -440,7 +472,7 @@ fun MapView(
             val mapView = com.mapbox.mapboxsdk.maps.MapView(context)
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
-                map.setStyle("$styleUrl?key=OZkqnFxcrUbHDpJQ5a3K") {
+                map.setStyle("$styleUrl?key=OZkqnFxcrUbHDpJQ5a3K") { style ->
                     map.uiSettings.isScrollGesturesEnabled = userInteractionEnabled
                     map.uiSettings.isZoomGesturesEnabled = userInteractionEnabled
                     map.uiSettings.isTiltGesturesEnabled = userInteractionEnabled
@@ -457,9 +489,71 @@ fun MapView(
                         .zoom(zoomValue)
                         .bearing(2.0)
                         .build()
+
+                    if (showAirports) {
+                        val drawable = ContextCompat.getDrawable(context, R.drawable.airport_marker)
+                        val bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        drawable.setBounds(0, 0, canvas.width, canvas.height)
+                        drawable.draw(canvas)
+                        style.addImage("airport-icon", bitmap)
+
+                        val featureCollection = FeatureCollection.fromFeatures(airportData.value?.map {
+                            Feature.fromGeometry(Point.fromLngLat(it.longitude, it.latitude))
+                        } ?: emptyList())
+
+                        val source = GeoJsonSource("airport-source", featureCollection, GeoJsonOptions().withCluster(true))
+                        style.addSource(source)
+
+                        val unclustered = SymbolLayer("unclustered-points", "airport-source")
+                        unclustered.setProperties(
+                            PropertyFactory.iconImage("airport-icon"),
+                            PropertyFactory.iconAllowOverlap(true),
+                            PropertyFactory.iconIgnorePlacement(true)
+                        )
+                        style.addLayer(unclustered)
+
+                        val countLayer = SymbolLayer("clustered-points-count", "airport-source")
+                        countLayer.setProperties(
+                            textField(Expression.toString(Expression.get("point_count"))),
+                            textSize(12f),
+                            textColor("white"),
+                            textIgnorePlacement(true),
+                            textAllowOverlap(true)
+                        )
+                        style.addLayer(countLayer)
+
+                        val clustered = SymbolLayer("clustered-points", "airport-source")
+                        clustered.setProperties(
+                            PropertyFactory.iconImage("airport-icon"),
+                            PropertyFactory.iconAllowOverlap(true),
+                            PropertyFactory.iconIgnorePlacement(true)
+                        )
+                        clustered.setFilter(Expression.has("point_count"))
+                        style.addLayer(clustered)
+                    }
                 }
             }
             mapView
         }
     )
 }
+
+fun readAirportData(context: Context): List<AirportMarkerData> {
+    val airportData = mutableListOf<AirportMarkerData>()
+    val inputStream = context.assets.open("airports.csv")
+    val reader = inputStream.bufferedReader()
+    reader.readLine()
+    reader.forEachLine { line ->
+        val fields = line.split(",")
+        val latitude = fields[4].toDoubleOrNull()
+        val longitude = fields[5].toDoubleOrNull()
+        val name = fields[3]
+        if (latitude != null && longitude != null) {
+            airportData.add(AirportMarkerData(name, latitude, longitude))
+        }
+    }
+    return airportData
+}
+
+data class AirportMarkerData(val name: String, val latitude: Double, val longitude: Double)
