@@ -90,7 +90,7 @@ fun AirportsScreen(navController: NavController) {
                 )
             },
             onValueChange = { searchText = it},
-            label = { Text("Search ICAO code") },
+            label = { Text("Search ICAO code or airport name") },
             leadingIcon = {
                 Icon(Icons.Rounded.Search, contentDescription = "Filter")
             },
