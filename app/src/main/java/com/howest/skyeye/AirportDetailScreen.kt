@@ -5,11 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import android.view.Gravity
 import android.widget.Toast
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,8 +21,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,15 +28,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.howest.skyeye.apirequest.ui.APIUiStateAirportApiData
@@ -57,6 +53,7 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
     val context = LocalContext.current
     var airportData: AirportApiData? = null
     var toast: Toast? = null
+    val airportMapTypeSetting = remember { mutableStateOf("normal") }
 
     LaunchedEffect(key1 = icao) {
         apiViewModel.getAirportData(icao)
@@ -158,9 +155,10 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
                             showCompass = false,
                             userInteractionEnabled = false,
                             zoomValue = 11.5,
-                            styleUrl = "https://api.maptiler.com/maps/cadastre-satellite/style.json",
+                            selectedMapTypeSetting = airportMapTypeSetting,
                             showAirports = false,
-                            context = LocalContext.current
+                            context = LocalContext.current,
+                            cameraPositionState = remember { mutableStateOf(null) }
                         )
                     }
                 }
