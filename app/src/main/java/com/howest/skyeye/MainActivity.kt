@@ -422,6 +422,8 @@ fun TopBar(navController: NavController, drawerState: DrawerState, scope: Corout
 fun BottomAppBar(navController: NavController) {
     var selectedItem by remember { mutableIntStateOf(-1) }
     var activeModal by remember { mutableStateOf("") }
+    var selectedWeatherSetting by remember { mutableStateOf("No weather") }
+
     val items = listOf(
         Pair(R.drawable.settings, "Settings"),
         Pair(R.drawable.weather, "Weather"),
@@ -447,7 +449,9 @@ fun BottomAppBar(navController: NavController) {
         }
     }
     when (activeModal) {
-        "Weather" -> WeatherModal { activeModal = "" }
+        "Weather" -> WeatherModal(selectedWeatherSetting, onDismissRequest = { activeModal = "" }) {
+            selectedWeatherSetting = it
+        }
         //"MapType" -> MapTypeModal { activeModal = "" }
         //"Filters" -> FiltersModal { activeModal = "" }
     }

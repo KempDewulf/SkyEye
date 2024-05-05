@@ -5,14 +5,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,20 +31,19 @@ import howest.nma.skyeye.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeatherModal(onDismissRequest: () -> Unit) {
-    var activeItem by remember { mutableStateOf("No weather") }
+fun WeatherModal(activeItem: String, onDismissRequest: () -> Unit, onActiveItemChange: (String) -> Unit) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = Modifier.height(500.dp)
+        modifier = Modifier.height(700.dp)
     ) {
         LazyColumn(
             modifier = Modifier
-                .height(500.dp)
+                .height(700.dp)
                 .padding(bottom = 50.dp)
         ) {
             item {
                 WeatherItem(R.drawable.none, "No weather", "No weather layer", activeItem == "No weather") {
-                    activeItem = "No weather"
+                    onActiveItemChange("No weather")
                 }
             }
             item {
@@ -59,7 +54,7 @@ fun WeatherModal(onDismissRequest: () -> Unit) {
             }
             item {
                 WeatherItem(R.drawable.clouds, "Cloud coverage", "Global IR Satellite provides cloud cover displayed on the map.", activeItem == "Cloud coverage") {
-                    activeItem = "Cloud coverage"
+                    onActiveItemChange("Cloud coverage")
                 }
             }
             item {
@@ -70,7 +65,7 @@ fun WeatherModal(onDismissRequest: () -> Unit) {
             }
             item {
                 WeatherItem(R.drawable.rain, "Rain", "Overview of the current precipitation on our live map.", activeItem == "Rain") {
-                    activeItem = "Rain"
+                    onActiveItemChange("Rain")
                 }
             }
         }
@@ -83,6 +78,7 @@ fun WeatherItem(imageId : Int, title: String, text : String, active : Boolean, o
         Text(
             text = title,
             fontSize = 20.sp,
+            fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
             modifier = Modifier
                 .padding(start = 16.dp, top = 16.dp, end = 16.dp)
         )
@@ -100,13 +96,14 @@ fun WeatherItem(imageId : Int, title: String, text : String, active : Boolean, o
                     .padding(all = 16.dp)
                     .clip(RoundedCornerShape(4.dp)) // Clip the image to the rounded shape
                     .border(
-                        width = if (active) 2.dp else 1.dp,
+                        width = if (active) 3.5.dp else 1.dp,
                         color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         shape = RoundedCornerShape(4.dp)
                     )
             )
             Text(
                 text = text,
+                fontWeight = if (active) FontWeight.Bold else FontWeight.Normal,
                 modifier = Modifier
                     .weight(1f)
                     .align(Alignment.CenterVertically)
