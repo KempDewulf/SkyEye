@@ -39,11 +39,11 @@ fun WeatherModal(onDismissRequest: () -> Unit) {
     var activeItem by remember { mutableStateOf("No weather") }
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = Modifier.height(500.dp)
+        modifier = Modifier.height(700.dp)
     ) {
         LazyColumn(
             modifier = Modifier
-                .height(500.dp)
+                .height(700.dp)
                 .padding(bottom = 50.dp)
         ) {
             item {
