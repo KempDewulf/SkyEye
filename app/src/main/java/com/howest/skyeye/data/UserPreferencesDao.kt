@@ -12,5 +12,5 @@ interface UserPreferencesDao {
     fun getUserPreferences(id: Int): Flow<UserPreferences>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserPreferences(userPreferences: UserPreferences)
+    suspend fun insertOrUpdateUserPreferences(userPreferences: UserPreferences)
 }
