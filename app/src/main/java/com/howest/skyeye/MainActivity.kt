@@ -86,10 +86,13 @@ import android.Manifest
 import android.app.UiModeManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import androidx.compose.runtime.collectAsState
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.howest.skyeye.workers.ReminderWorker
 import androidx.work.WorkManager
+import com.howest.skyeye.data.UserPreferencesDatabase
+import com.howest.skyeye.data.UserPreferencesRepository
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
@@ -109,6 +112,7 @@ var buildVersion = "0.2.0"
 
 class MainActivity : ComponentActivity() {
     private lateinit var navController: NavController
+
     val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -121,8 +125,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
-            var isDarkMode by remember { mutableStateOf(uiModeManager.nightMode == UiModeManager.MODE_NIGHT_YES) }
+            val userPreferencesDatabase = UserPreferencesDatabase.getDatabase(applicationContext)
+            val userPreferencesDao = userPreferencesDatabase.userPreferencesDao()
+            val userPreferencesRepository = UserPreferencesRepository(userPreferencesDao)
+            val userPreferencesFlow = userPreferencesRepository.userPreferences
+            var isDarkMode by remember { mutableStateOf(false) }
             val reminderWorkRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
                 .setInitialDelay(2, TimeUnit.DAYS)
                 .build()
@@ -132,6 +139,19 @@ class MainActivity : ComponentActivity() {
                 ExistingWorkPolicy.REPLACE,
                 reminderWorkRequest
             )
+
+            LaunchedEffect(userPreferencesFlow) {
+                userPreferencesFlow.collect { userPreferences ->
+                    isDarkMode = userPreferences?.is_dark_mode ?: false
+                }
+            }
+
+            LaunchedEffect(isDarkMode) {
+                // Get the UiModeManager system service
+                val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+                // Set the night mode based on isDarkMode
+                uiModeManager.nightMode = if (isDarkMode) UiModeManager.MODE_NIGHT_YES else UiModeManager.MODE_NIGHT_NO
+            }
 
             SkyEyeTheme(darkTheme = isDarkMode) {
                 navController = rememberNavController()
@@ -174,7 +194,7 @@ class MainActivity : ComponentActivity() {
                                 AccountSettingsScreen(navController)
                             }
                             composable("appearance") {
-                                AppearanceSettingsScreen(navController, isDarkMode) { isDarkMode = it }
+                                AppearanceSettingsScreen(navController, userPreferencesRepository) { isDarkMode = it }
                             }
                             composable("support") {
                                 SupportSettingsScreen(navController)
