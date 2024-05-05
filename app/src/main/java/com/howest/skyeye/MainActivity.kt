@@ -86,6 +86,7 @@ import android.Manifest
 import android.app.UiModeManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
