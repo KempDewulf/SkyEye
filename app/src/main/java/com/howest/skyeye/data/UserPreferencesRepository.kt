@@ -1,9 +1,10 @@
 package com.howest.skyeye.data
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
+
 
 class UserPreferencesRepository(private val userPreferencesDao: UserPreferencesDao) {
-    val userPreferences: LiveData<UserPreferences> = userPreferencesDao.getUserPreferences(0)
+    val userPreferences: Flow<UserPreferences> = userPreferencesDao.getUserPreferences(0)
 
     suspend fun insertUserPreferences(userPreferences: UserPreferences) {
         userPreferencesDao.insertUserPreferences(userPreferences)
