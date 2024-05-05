@@ -148,19 +148,21 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
                         Icon(painterResource(id = R.drawable.google_maps_tile), contentDescription = "Open in Maps", modifier = Modifier.size(32.dp), tint = Color.Unspecified)
                     }
                 }) {
-                    MapView(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        latitude = 31.56, //VARIABLE COORDS
-                        longitude = 64.36, //VARIABLE COORDS
-                        showCompass = false,
-                        userInteractionEnabled = false,
-                        zoomValue = 13.5,
-                        styleUrl = "https://api.maptiler.com/maps/cadastre-satellite/style.json",
-                        showAirports = false,
-                        context = LocalContext.current
-                    )
+                    if (airportData != null) {
+                        MapView(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            latitude = airportData.latitude_deg.toDouble(),
+                            longitude = airportData.longitude_deg.toDouble(),
+                            showCompass = false,
+                            userInteractionEnabled = false,
+                            zoomValue = 11.5,
+                            styleUrl = "https://api.maptiler.com/maps/cadastre-satellite/style.json",
+                            showAirports = false,
+                            context = LocalContext.current
+                        )
+                    }
                 }
             }
         }
