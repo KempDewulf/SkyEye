@@ -64,7 +64,6 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
     when(apiUiState) {
         is APIUiStateAirportApiData.Success -> {
             airportData = apiUiState.data
-            Log.d("airportdata", airportData.toString())
             details = listOf(
                 "ICAO Code" to airportData.ident,
                 "IATA Code" to airportData.iata_code,

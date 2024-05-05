@@ -40,8 +40,6 @@ fun AppearanceSettingsScreen(
     LaunchedEffect(userPreferencesFlow) {
         userPreferencesFlow.collect { userPreferences ->
             isDarkMode = userPreferences?.is_dark_mode ?: false
-            Log.d("AppearanceSettingsScreen", "userPreferences.is_dark_mode: ${userPreferences?.is_dark_mode}")
-            Log.d("AppearanceSettingsScreen", "isDarkMode: $isDarkMode")
         }
     }
 

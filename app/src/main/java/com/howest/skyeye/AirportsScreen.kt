@@ -1,5 +1,6 @@
 package com.howest.skyeye
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -111,54 +114,42 @@ fun AirportsScreen(navController: NavController) {
 
 @Composable
 fun AirportList(navController: NavController, expandedCountries: Set<String>, searchText: String, onToggle: (String) -> Unit) {
-    val airportsByCountry = mapOf(
-        "Afghanistan" to Pair("AFG", listOf(
-            AirportData("Bost Airport", "BST / OABT"),
-            AirportData("Chaghcaran Airport", "CCN / OACC")
-        )),
-        "Albania" to Pair("ALB", listOf(
-            AirportData("Rinas Airport", "LAT / LATI"),
-            AirportData("Novsele Airport", "LAK / LAKU"),
-            AirportData("Shtiqen Airport", "LVL / LAVL")
-        )),
-        "Algeria" to Pair("DZA", listOf(
-            AirportData("Houari Boumediene Airport", "ALG / ALGA"),
-            AirportData("Es Senia Airport", "ORN / ORNA"),
-            AirportData("Ain Arnat Airport", "QSF / QSFA")
-        ))
-        // Add more countries and airports as needed
-    )
+    val context = LocalContext.current
+    val airportData = remember { mutableStateOf<List<AirportInfo>?>(null) }
 
-    // Filter countries based on search text
-    val filteredCountries = airportsByCountry.filterKeys { country ->
-        country.contains(searchText, ignoreCase = true) ||
-                airportsByCountry[country]?.second?.any { it.ICAO.contains(searchText, ignoreCase = true) } == true
+    LaunchedEffect(Unit) {
+        airportData.value = readAirportInfo(context)
     }
 
-    LazyColumn {
-        filteredCountries.forEach { (country, data) ->
-            val (countryCode, airports) = data
-            item {
-                // Pass both countryCode and ICAO for each CountryItem
-                CountryItem(country, countryCode, onClick = { onToggle(country) }, isExpanded = expandedCountries.contains(country))
-            }
+    val airportsByCountry = airportData.value?.groupBy { it.country }
 
-            if (expandedCountries.contains(country)) {
-                // Filter airports based on search text
-                val filteredAirports = airports.filter { it.ICAO.contains(searchText, ignoreCase = true) }
-                items(filteredAirports) { airport ->
-                    // Pass the NavController and the ICAO for each AirportItem
-                    AirportItem(navController, airport.name, airport.ICAO.split(" / ").last())
+    // Filter countries based on search text
+    val filteredCountries = airportsByCountry?.filterKeys { country ->
+        country.contains(searchText, ignoreCase = true) ||
+                airportsByCountry[country]?.any { it.ICAO.contains(searchText, ignoreCase = true) } == true
+    }
+
+
+    LazyColumn {
+        filteredCountries?.forEach { (country, airports) ->
+            airports.firstOrNull()?.let { firstAirport ->
+                item {
+                    CountryItem(firstAirport, onClick = { onToggle(country) }, isExpanded = expandedCountries.contains(country))
+                }
+
+                if (expandedCountries.contains(country)) {
+                    val filteredAirports = airports.filter { it.ICAO.contains(searchText, ignoreCase = true) }
+                    items(filteredAirports) { airport ->
+                        AirportItem(navController, airport.name, airport.ICAO)
+                    }
                 }
             }
         }
     }
 }
 
-data class AirportData(val name: String, val ICAO: String)
-
 @Composable
-fun CountryItem(country: String, countryCode: String, onClick: () -> Unit, isExpanded: Boolean) {
+fun CountryItem(airportInfo: AirportInfo, onClick: () -> Unit, isExpanded: Boolean) {
     // Clickable row for the country
     Column(
         modifier = Modifier
@@ -168,7 +159,7 @@ fun CountryItem(country: String, countryCode: String, onClick: () -> Unit, isExp
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        Text(text = countryCode, style = MaterialTheme.typography.labelSmall)
+        Text(text = airportInfo.country, style = MaterialTheme.typography.labelSmall)
 
         // Content (Country name and toggle icon)
         Row(
@@ -177,7 +168,7 @@ fun CountryItem(country: String, countryCode: String, onClick: () -> Unit, isExp
                 .padding(top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = country, style = MaterialTheme.typography.bodyMedium)
+            Text(text = airportInfo.fullCountryName, style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -221,3 +212,22 @@ private fun toggleCountry(expandedCountries: Set<String>, country: String): Set<
         expandedCountries + country
     }
 }
+
+fun readAirportInfo(context: Context): List<AirportInfo> {
+    val airportData = mutableListOf<AirportInfo>()
+    val inputStream = context.assets.open("airports.csv")
+    val reader = inputStream.bufferedReader()
+    reader.readLine() // Skip the header line
+    reader.forEachLine { line ->
+        val fields = line.split(",")
+        val country = fields[8] // iso_country field
+        val icao = fields[1] // ident field
+        val name = fields[3] // name field
+        val fullCountryName = fields[18]
+        airportData.add(AirportInfo(country, icao, name, fullCountryName))
+    }
+    return airportData
+}
+
+data class AirportInfo(val country: String, val ICAO: String, val name: String, val fullCountryName: String)
+data class AirportData(val name: String, val ICAO: String)
