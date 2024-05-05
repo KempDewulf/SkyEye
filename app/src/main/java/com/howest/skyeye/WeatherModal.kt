@@ -16,13 +16,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,7 +39,7 @@ fun WeatherModal(activeItem: String, onDismissRequest: () -> Unit, onActiveItemC
                 .padding(bottom = 50.dp)
         ) {
             item {
-                WeatherItem(R.drawable.none, "No weather", "No weather layer", activeItem == "No weather") {
+                WeatherModalItem(R.drawable.none, "No weather", "No weather layer", activeItem == "No weather") {
                     onActiveItemChange("No weather")
                 }
             }
@@ -53,7 +50,7 @@ fun WeatherModal(activeItem: String, onDismissRequest: () -> Unit, onActiveItemC
                 )
             }
             item {
-                WeatherItem(R.drawable.clouds, "Cloud coverage", "Global IR Satellite provides cloud cover displayed on the map.", activeItem == "Cloud coverage") {
+                WeatherModalItem(R.drawable.clouds, "Cloud coverage", "Global IR Satellite provides cloud cover displayed on the map.", activeItem == "Cloud coverage") {
                     onActiveItemChange("Cloud coverage")
                 }
             }
@@ -64,7 +61,7 @@ fun WeatherModal(activeItem: String, onDismissRequest: () -> Unit, onActiveItemC
                 )
             }
             item {
-                WeatherItem(R.drawable.rain, "Rain", "Overview of the current precipitation on our live map.", activeItem == "Rain") {
+                WeatherModalItem(R.drawable.rain, "Rain", "Overview of the current precipitation on our live map.", activeItem == "Rain") {
                     onActiveItemChange("Rain")
                 }
             }
@@ -73,7 +70,7 @@ fun WeatherModal(activeItem: String, onDismissRequest: () -> Unit, onActiveItemC
 }
 
 @Composable
-fun WeatherItem(imageId : Int, title: String, text : String, active : Boolean, onClick: () -> Unit) {
+fun WeatherModalItem(imageId : Int, title: String, text : String, active : Boolean, onClick: () -> Unit) {
     Column {
         Text(
             text = title,
@@ -90,11 +87,11 @@ fun WeatherItem(imageId : Int, title: String, text : String, active : Boolean, o
             Image(
                 painter = painterResource(id = imageId),
                 contentDescription = "$title image",
-                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .weight(1f)
                     .padding(all = 16.dp)
-                    .clip(RoundedCornerShape(4.dp)) // Clip the image to the rounded shape
+                    .clip(RoundedCornerShape(4.dp))
                     .border(
                         width = if (active) 3.5.dp else 1.dp,
                         color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
