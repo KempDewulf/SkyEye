@@ -453,7 +453,6 @@ fun BottomAppBar(navController: NavController, selectedMapTypeSetting: MutableSt
     var selectedItem by remember { mutableIntStateOf(-1) }
     var activeModal by remember { mutableStateOf("") }
     var selectedWeatherSetting by remember { mutableStateOf("No weather") }
-
     val items = listOf(
         Pair(R.drawable.settings, "Settings"),
         Pair(R.drawable.weather, "Weather"),
@@ -485,7 +484,7 @@ fun BottomAppBar(navController: NavController, selectedMapTypeSetting: MutableSt
         "MapType" -> MapTypeModal(selectedMapTypeSetting, onDismissRequest = { activeModal = "" }) {
             selectedMapTypeSetting.value = it
         }
-        //"Filters" -> FiltersModal { activeModal = "" }
+        "Filters" -> FilterModal() { activeModal = "" }
     }
 }
 
