@@ -126,7 +126,10 @@ fun AirportList(navController: NavController, expandedCountries: Set<String>, se
     // Filter countries based on search text
     val filteredCountries = airportsByCountry?.filterKeys { country ->
         country.contains(searchText, ignoreCase = true) ||
-                airportsByCountry[country]?.any { it.ICAO.contains(searchText, ignoreCase = true) } == true
+                airportsByCountry[country]?.any {
+                    it.ICAO.contains(searchText, ignoreCase = true) ||
+                            it.name.contains(searchText, ignoreCase = true)
+                } == true
     }
 
 
@@ -138,7 +141,11 @@ fun AirportList(navController: NavController, expandedCountries: Set<String>, se
                 }
 
                 if (expandedCountries.contains(country)) {
-                    val filteredAirports = airports.filter { it.ICAO.contains(searchText, ignoreCase = true) }
+                    val filteredAirports = if (country.contains(searchText, ignoreCase = true)) {
+                        airports // If the country name matches the search text, show all airports
+                    } else {
+                        airports.filter { it.ICAO.contains(searchText, ignoreCase = true) || it.name.contains(searchText, ignoreCase = true) }
+                    }
                     items(filteredAirports) { airport ->
                         AirportItem(navController, airport.name, airport.ICAO)
                     }
