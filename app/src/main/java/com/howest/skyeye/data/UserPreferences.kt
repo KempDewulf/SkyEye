@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class UserPreferences(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val isDarkMode: Boolean
+    val is_dark_mode: Boolean
 )

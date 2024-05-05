@@ -6,7 +6,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [UserPreferences::class], version = 1)
+@Database(entities = [UserPreferences::class], version = 2)
 abstract class UserPreferencesDatabase : RoomDatabase() {
 
     abstract fun userPreferencesDao(): UserPreferencesDao
@@ -21,7 +21,9 @@ abstract class UserPreferencesDatabase : RoomDatabase() {
                     context.applicationContext,
                     UserPreferencesDatabase::class.java,
                     "user_preferences_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration() // Allow for destructive migrations
+                    .build()
                 INSTANCE = instance
                 instance
             }
