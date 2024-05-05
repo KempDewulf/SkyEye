@@ -421,11 +421,12 @@ fun TopBar(navController: NavController, drawerState: DrawerState, scope: Corout
 @Composable
 fun BottomAppBar(navController: NavController) {
     var selectedItem by remember { mutableIntStateOf(-1) }
+    var activeModal by remember { mutableStateOf("") }
     val items = listOf(
         Pair(R.drawable.settings, "Settings"),
         Pair(R.drawable.weather, "Weather"),
         Pair(R.drawable.camera, "Camera"),
-        Pair(R.drawable.map, "Map Type"),
+        Pair(R.drawable.map, "MapType"),
         Pair(R.drawable.filter, "Filters")
     )
     NavigationBar {
@@ -433,13 +434,22 @@ fun BottomAppBar(navController: NavController) {
             NavigationBarItem(
                 icon = { Icon(painterResource(id = icon), contentDescription = label) },
                 label = { Text(label) },
-                selected = selectedItem == index,
+                selected = activeModal == label,
                 onClick = {
                     selectedItem = index
-                    navController.navigate(label.lowercase())
+                    if (label in listOf("Weather", "MapType", "Filters")) {
+                        activeModal = label
+                    } else {
+                        navController.navigate(label.lowercase())
+                    }
                 }
             )
         }
+    }
+    when (activeModal) {
+        "Weather" -> WeatherModal { activeModal = "" }
+        //"MapType" -> MapTypeModal { activeModal = "" }
+        //"Filters" -> FiltersModal { activeModal = "" }
     }
 }
 
