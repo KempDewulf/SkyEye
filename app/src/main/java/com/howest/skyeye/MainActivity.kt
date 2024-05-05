@@ -24,9 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -86,6 +84,10 @@ import android.Manifest
 import android.app.UiModeManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.util.Log
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.MutableState
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.howest.skyeye.workers.ReminderWorker
@@ -93,13 +95,9 @@ import androidx.work.WorkManager
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.expressions.Expression
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textAllowOverlap
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textIgnorePlacement
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.textSize
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonOptions
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
@@ -213,6 +211,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+val mapTypeToStyleUrl = mapOf(
+    "normal" to "https://api.maptiler.com/maps/basic-v2/style.json",
+    "terrain" to "https://api.maptiler.com/maps/satellite/style.json",
+    "satellite" to "https://api.maptiler.com/maps/landscape/style.json",
+    "dark" to "https://api.maptiler.com/maps/eacc7abe-07e2-4f1f-b5ed-1c46460b8c83/style.json"
+)
+
 @Composable
 private fun MainActivity.OpenCamera(navController: NavController) {
     when (PackageManager.PERMISSION_GRANTED) {
@@ -243,7 +248,7 @@ fun Drawer(navController: NavController) {
         gesturesEnabled = false,
         drawerContent = { DrawerContent(drawerState, scope, items, navController) },
         scrimColor = Color.Black.copy(alpha = 0.8f),
-        content = { Homescreen(drawerState, scope, navController) }
+        content = { HomeScreen(drawerState, scope, navController) }
     )
 }
 
@@ -271,7 +276,7 @@ fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController:
     ) {
         IconButton(onClick = { scope.launch { drawerState.close() } }) {
             Icon(
-                Icons.Rounded.ArrowBack,
+                Icons.AutoMirrored.Rounded.ArrowBack,
                 contentDescription = null,
                 modifier = Modifier
                     .size(30.dp)
@@ -298,10 +303,10 @@ fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController:
             }
         }
     }
-    Divider(
-        color = MaterialTheme.colorScheme.outlineVariant,
+    HorizontalDivider(
+        modifier = Modifier.padding(start = 25.dp, end = 25.dp, top = 5.dp),
         thickness = 1.dp,
-        modifier = Modifier.padding(start = 25.dp, end = 25.dp, top = 5.dp)
+        color = MaterialTheme.colorScheme.outlineVariant
     )
     Spacer(Modifier.height(18.dp))
 }
@@ -381,13 +386,16 @@ fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerSta
 }
 
 @Composable
-fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+fun HomeScreen(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+    val selectedMapTypeSetting = remember { mutableStateOf("normal") }
+    val cameraPositionState = remember { mutableStateOf<CameraPosition?>(null) }
+
     Scaffold(
         topBar = {
             TopBar(navController, drawerState, scope)
         },
         bottomBar = {
-            BottomAppBar(navController)
+            BottomAppBar(navController, selectedMapTypeSetting)
         }
     ) { paddingValues ->
         // Use the contentPadding parameter to apply padding to the content
@@ -396,7 +404,9 @@ fun Homescreen(drawerState: DrawerState, scope: CoroutineScope, navController: N
             latitude = 50.5,
             longitude = 4.47,
             context = LocalContext.current,
-            showAirports = true
+            showAirports = true,
+            selectedMapTypeSetting = selectedMapTypeSetting,
+            cameraPositionState = cameraPositionState
         )
     }
 }
@@ -419,7 +429,7 @@ fun TopBar(navController: NavController, drawerState: DrawerState, scope: Corout
 }
 
 @Composable
-fun BottomAppBar(navController: NavController) {
+fun BottomAppBar(navController: NavController, selectedMapTypeSetting: MutableState<String>) {
     var selectedItem by remember { mutableIntStateOf(-1) }
     var activeModal by remember { mutableStateOf("") }
     var selectedWeatherSetting by remember { mutableStateOf("No weather") }
@@ -452,7 +462,9 @@ fun BottomAppBar(navController: NavController) {
         "Weather" -> WeatherModal(selectedWeatherSetting, onDismissRequest = { activeModal = "" }) {
             selectedWeatherSetting = it
         }
-        //"MapType" -> MapTypeModal { activeModal = "" }
+        "MapType" -> MapTypeModal(selectedMapTypeSetting, onDismissRequest = { activeModal = "" }) {
+            selectedMapTypeSetting.value = it
+        }
         //"Filters" -> FiltersModal { activeModal = "" }
     }
 }
@@ -465,10 +477,12 @@ fun MapView(
     showCompass: Boolean = true,
     userInteractionEnabled: Boolean = true,
     zoomValue: Double = 3.5,
-    styleUrl: String = "https://api.maptiler.com/maps/basic-v2/style.json",
+    selectedMapTypeSetting: MutableState<String>,
     context: Context,
-    showAirports: Boolean = false
+    showAirports: Boolean = false,
+    cameraPositionState: MutableState<CameraPosition?>
 ) {
+    val styleUrl = mapTypeToStyleUrl[selectedMapTypeSetting.value] ?: "https://api.maptiler.com/maps/basic-v2/style.json"
     val airportData = remember { mutableStateOf<List<AirportMarkerData>?>(null) }
 
     LaunchedEffect(Unit) {
@@ -482,71 +496,114 @@ fun MapView(
             val mapView = com.mapbox.mapboxsdk.maps.MapView(context)
             mapView.onCreate(null)
             mapView.getMapAsync { map ->
-                map.setStyle("$styleUrl?key=OZkqnFxcrUbHDpJQ5a3K") { style ->
-                    map.uiSettings.isScrollGesturesEnabled = userInteractionEnabled
-                    map.uiSettings.isZoomGesturesEnabled = userInteractionEnabled
-                    map.uiSettings.isTiltGesturesEnabled = userInteractionEnabled
-                    map.uiSettings.isRotateGesturesEnabled = userInteractionEnabled
-                    map.uiSettings.setAttributionMargins(15, 0, 0, 15)
-                    map.uiSettings.isCompassEnabled = showCompass
-                    map.uiSettings.compassGravity = Gravity.BOTTOM or Gravity.START
-                    map.uiSettings.setCompassMargins(40, 0, 0, 40)
-                    map.uiSettings.isAttributionEnabled = false
-                    map.uiSettings.isLogoEnabled = false
-                    map.uiSettings.setCompassFadeFacingNorth(false)
-                    map.cameraPosition = CameraPosition.Builder()
-                        .target(LatLng(latitude, longitude))
-                        .zoom(zoomValue)
-                        .bearing(2.0)
-                        .build()
-
-                    if (showAirports) {
-                        val drawable = ContextCompat.getDrawable(context, R.drawable.airport_marker)
-                        val bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
-                        val canvas = Canvas(bitmap)
-                        drawable.setBounds(0, 0, canvas.width, canvas.height)
-                        drawable.draw(canvas)
-                        style.addImage("airport-icon", bitmap)
-
-                        val featureCollection = FeatureCollection.fromFeatures(airportData.value?.map {
-                            Feature.fromGeometry(Point.fromLngLat(it.longitude, it.latitude))
-                        } ?: emptyList())
-
-                        val source = GeoJsonSource("airport-source", featureCollection, GeoJsonOptions().withCluster(true))
-                        style.addSource(source)
-
-                        val unclustered = SymbolLayer("unclustered-points", "airport-source")
-                        unclustered.setProperties(
-                            PropertyFactory.iconImage("airport-icon"),
-                            PropertyFactory.iconAllowOverlap(true),
-                            PropertyFactory.iconIgnorePlacement(true)
-                        )
-                        style.addLayer(unclustered)
-
-                        val countLayer = SymbolLayer("clustered-points-count", "airport-source")
-                        countLayer.setProperties(
-                            textField(Expression.toString(Expression.get("point_count"))),
-                            textSize(12f),
-                            textColor("white"),
-                            textIgnorePlacement(true),
-                            textAllowOverlap(true)
-                        )
-                        style.addLayer(countLayer)
-
-                        val clustered = SymbolLayer("clustered-points", "airport-source")
-                        clustered.setProperties(
-                            PropertyFactory.iconImage("airport-icon"),
-                            PropertyFactory.iconAllowOverlap(true),
-                            PropertyFactory.iconIgnorePlacement(true)
-                        )
-                        clustered.setFilter(Expression.has("point_count"))
-                        style.addLayer(clustered)
-                    }
-                }
+                setupMap(
+                    map,
+                    styleUrl,
+                    userInteractionEnabled,
+                    showCompass,
+                    latitude,
+                    longitude,
+                    zoomValue,
+                    showAirports,
+                    context,
+                    airportData.value,
+                    cameraPositionState
+                )
             }
             mapView
+        },
+        update = { mapView ->
+            mapView.getMapAsync { map ->
+                setupMap(
+                    map,
+                    styleUrl,
+                    userInteractionEnabled,
+                    showCompass,
+                    latitude,
+                    longitude,
+                    zoomValue,
+                    showAirports,
+                    context,
+                    airportData.value,
+                    cameraPositionState
+                )
+            }
         }
     )
+}
+
+fun setupMap(
+    map: MapboxMap,
+    styleUrl: String,
+    userInteractionEnabled: Boolean,
+    showCompass: Boolean,
+    latitude: Double,
+    longitude: Double,
+    zoomValue: Double,
+    showAirports: Boolean,
+    context: Context,
+    airportData: List<AirportMarkerData>?,
+    cameraPositionState: MutableState<CameraPosition?>
+) {
+    map.addOnCameraMoveListener {
+        cameraPositionState.value = map.cameraPosition
+    }
+    map.setStyle("$styleUrl?key=OZkqnFxcrUbHDpJQ5a3K") { style ->
+        map.uiSettings.isScrollGesturesEnabled = userInteractionEnabled
+        map.uiSettings.isZoomGesturesEnabled = userInteractionEnabled
+        map.uiSettings.isTiltGesturesEnabled = userInteractionEnabled
+        map.uiSettings.isRotateGesturesEnabled = userInteractionEnabled
+        map.uiSettings.setAttributionMargins(15, 0, 0, 15)
+        map.uiSettings.isCompassEnabled = showCompass
+        map.uiSettings.compassGravity = Gravity.BOTTOM or Gravity.START
+        map.uiSettings.setCompassMargins(40, 0, 0, 40)
+        map.uiSettings.isAttributionEnabled = false
+        map.uiSettings.isLogoEnabled = false
+        map.uiSettings.setCompassFadeFacingNorth(false)
+
+        if (cameraPositionState.value == null) {
+            cameraPositionState.value = CameraPosition.Builder()
+                .target(LatLng(latitude, longitude))
+                .zoom(zoomValue)
+                .bearing(2.0)
+                .build()
+        }
+
+        map.cameraPosition = cameraPositionState.value!!
+
+        if (showAirports) {
+            val drawable = ContextCompat.getDrawable(context, R.drawable.airport_marker)
+            val bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            style.addImage("airport-icon", bitmap)
+
+            val featureCollection = FeatureCollection.fromFeatures(airportData?.map {
+                Feature.fromGeometry(Point.fromLngLat(it.longitude, it.latitude))
+            } ?: emptyList())
+
+            val source = GeoJsonSource("airport-source", featureCollection, GeoJsonOptions().withCluster(true))
+            style.addSource(source)
+
+            val unclustered = SymbolLayer("unclustered-points", "airport-source")
+            unclustered.setProperties(
+                PropertyFactory.iconImage("airport-icon"),
+                PropertyFactory.iconAllowOverlap(true),
+                PropertyFactory.iconIgnorePlacement(true)
+            )
+            style.addLayer(unclustered)
+
+            val clustered = SymbolLayer("clustered-points", "airport-source")
+            clustered.setProperties(
+                PropertyFactory.iconImage("airport-icon"),
+                PropertyFactory.iconAllowOverlap(true),
+                PropertyFactory.iconIgnorePlacement(true)
+            )
+            clustered.setFilter(Expression.has("point_count"))
+            style.addLayer(clustered)
+        }
+    }
 }
 
 fun readAirportData(context: Context): List<AirportMarkerData> {
