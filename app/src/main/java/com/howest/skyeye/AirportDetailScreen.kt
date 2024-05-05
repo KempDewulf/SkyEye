@@ -158,7 +158,8 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
                             selectedMapTypeSetting = airportMapTypeSetting,
                             showAirports = false,
                             context = LocalContext.current,
-                            cameraPositionState = remember { mutableStateOf(null) }
+                            cameraPositionState = remember { mutableStateOf(null) },
+                            navController = navController
                         )
                     }
                 }

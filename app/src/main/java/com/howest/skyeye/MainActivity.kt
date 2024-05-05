@@ -98,6 +98,7 @@ import com.howest.skyeye.data.UserPreferencesRepository
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.expressions.Expression
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
@@ -426,7 +427,8 @@ fun HomeScreen(drawerState: DrawerState, scope: CoroutineScope, navController: N
             context = LocalContext.current,
             showAirports = true,
             selectedMapTypeSetting = selectedMapTypeSetting,
-            cameraPositionState = cameraPositionState
+            cameraPositionState = cameraPositionState,
+            navController = navController
         )
     }
 }
@@ -499,7 +501,8 @@ fun MapView(
     selectedMapTypeSetting: MutableState<String>,
     context: Context,
     showAirports: Boolean = false,
-    cameraPositionState: MutableState<CameraPosition?>
+    cameraPositionState: MutableState<CameraPosition?>,
+    navController: NavController
 ) {
     val styleUrl = mapTypeToStyleUrl[selectedMapTypeSetting.value] ?: "https://api.maptiler.com/maps/basic-v2/style.json"
     val airportData = remember { mutableStateOf<List<AirportMarkerData>?>(null) }
@@ -526,7 +529,8 @@ fun MapView(
                     showAirports,
                     context,
                     airportData.value,
-                    cameraPositionState
+                    cameraPositionState,
+                    navController
                 )
             }
             mapView
@@ -544,7 +548,8 @@ fun MapView(
                     showAirports,
                     context,
                     airportData.value,
-                    cameraPositionState
+                    cameraPositionState,
+                    navController
                 )
             }
         }
@@ -562,7 +567,8 @@ fun setupMap(
     showAirports: Boolean,
     context: Context,
     airportData: List<AirportMarkerData>?,
-    cameraPositionState: MutableState<CameraPosition?>
+    cameraPositionState: MutableState<CameraPosition?>,
+    navController: NavController
 ) {
     map.addOnCameraMoveListener {
         cameraPositionState.value = map.cameraPosition
@@ -600,6 +606,10 @@ fun setupMap(
 
             val featureCollection = FeatureCollection.fromFeatures(airportData?.map {
                 Feature.fromGeometry(Point.fromLngLat(it.longitude, it.latitude))
+                    .also { feature ->
+                        feature.addStringProperty("name", it.name)
+                        feature.addStringProperty("icao", it.icao)
+                    }
             } ?: emptyList())
 
             val source = GeoJsonSource("airport-source", featureCollection, GeoJsonOptions().withCluster(true))
@@ -623,6 +633,29 @@ fun setupMap(
             style.addLayer(clustered)
         }
     }
+
+    map.addOnMapClickListener { point ->
+        val pixel = map.projection.toScreenLocation(point)
+        val features = map.queryRenderedFeatures(pixel, "unclustered-points", "clustered-points")
+        for (feature in features) {
+            if (feature.hasProperty("cluster") && feature.getBooleanProperty("cluster")) {
+                val newCameraPosition = CameraPosition.Builder()
+                    .target(LatLng(point.latitude, point.longitude))
+                    .zoom(map.cameraPosition.zoom + 2)
+                    .build()
+                map.easeCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition))
+                return@addOnMapClickListener true
+            } else {
+                // Handle click on single airport marker
+                val airportICAO = feature.getStringProperty("icao")
+                val airportName = feature.getStringProperty("name")
+
+                navController.navigate("AirportDetailScreen/$airportICAO/$airportName")
+                return@addOnMapClickListener true
+            }
+        }
+        false
+    }
 }
 
 fun readAirportData(context: Context): List<AirportMarkerData> {
@@ -635,11 +668,13 @@ fun readAirportData(context: Context): List<AirportMarkerData> {
         val latitude = fields[4].toDoubleOrNull()
         val longitude = fields[5].toDoubleOrNull()
         val name = fields[3]
+        val icao = fields[1]
         if (latitude != null && longitude != null) {
-            airportData.add(AirportMarkerData(name, latitude, longitude))
+            val airportMarkerData = AirportMarkerData(name, latitude, longitude, icao)
+            airportData.add(airportMarkerData)
         }
     }
     return airportData
 }
 
-data class AirportMarkerData(val name: String, val latitude: Double, val longitude: Double)
+data class AirportMarkerData(val name: String, val latitude: Double, val longitude: Double, val icao: String)
