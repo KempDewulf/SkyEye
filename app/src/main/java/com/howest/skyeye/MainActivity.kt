@@ -234,8 +234,8 @@ class MainActivity : ComponentActivity() {
 
 val mapTypeToStyleUrl = mapOf(
     "normal" to "https://api.maptiler.com/maps/basic-v2/style.json",
-    "terrain" to "https://api.maptiler.com/maps/satellite/style.json",
-    "satellite" to "https://api.maptiler.com/maps/landscape/style.json",
+    "terrain" to "https://api.maptiler.com/maps/landscape/style.json",
+    "satellite" to "https://api.maptiler.com/maps/satellite/style.json",
     "dark" to "https://api.maptiler.com/maps/eacc7abe-07e2-4f1f-b5ed-1c46460b8c83/style.json"
 )
 
