@@ -2,12 +2,11 @@ package com.howest.skyeye.ui.core
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.howest.skyeye.data.UserPreferences
-import com.howest.skyeye.data.UserPreferencesRepositoryInterface
+import com.howest.skyeye.data.userpreferences.UserPreferences
+import com.howest.skyeye.data.userpreferences.UserPreferencesRepositoryInterface
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val userPreferencesRepositoryInterface: UserPreferencesRepositoryInterface) : ViewModel() {

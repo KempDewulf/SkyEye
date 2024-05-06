@@ -1,4 +1,4 @@
-package com.howest.skyeye.data
+package com.howest.skyeye.data.userpreferences
 
 import androidx.room.Dao
 import androidx.room.Insert

@@ -1,6 +1,9 @@
 package com.howest.skyeye.data
 
 import android.content.Context
+import com.howest.skyeye.data.userpreferences.UserPreferencesDatabase
+import com.howest.skyeye.data.userpreferences.UserPreferencesRepository
+import com.howest.skyeye.data.userpreferences.UserPreferencesRepositoryInterface
 
 interface AppContainer {
     val userPreferencesRepositoryInterface: UserPreferencesRepositoryInterface
