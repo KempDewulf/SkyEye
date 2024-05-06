@@ -1,6 +1,5 @@
 package com.howest.skyeye.ui.user
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.howest.skyeye.data.useraccounts.UserRepositoryInterface
@@ -25,15 +24,10 @@ class UserViewModel(private val userRepository: UserRepositoryInterface) : ViewM
         viewModelScope.launch {
             try {
                 val user = userRepository.verifyLoginUser(email, hashedPassword)
-                if (user != null) {
-                    _uiState.value = UserUiState(email = user.email, password = user.password, isLoggedIn = true, isLoading = false)
-                } else {
-                    _uiState.value = UserUiState(error = "Login failed: Account does not exist", isLoading = false)
-                }
+                _uiState.value = UserUiState(email = user.email, password = user.password, isLoggedIn = true, isLoading = false)
             } catch (e: Exception) {
                 _uiState.value = UserUiState(error = "Login failed: ${e.message}", isLoading = false)
             }
-            Log.d("UserViewModel", "login: ${_uiState.value}")
         }
     }
 
@@ -42,12 +36,11 @@ class UserViewModel(private val userRepository: UserRepositoryInterface) : ViewM
         val hashedPassword = hashPassword(password)
         viewModelScope.launch {
             try {
-                val userId = userRepository.addUser(Users(email = email, password = hashedPassword))
+                userRepository.addUser(Users(email = email, password = hashedPassword))
                 _uiState.value = UserUiState(email = email, password = password, isLoggedIn = true, isLoading = false)
             } catch (e: Exception) {
                 _uiState.value = UserUiState(error = "Registration failed: ${e.message}", isLoading = false)
             }
-            Log.d("UserViewModel", "register: ${_uiState.value}")
         }
     }
 
