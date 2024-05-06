@@ -17,15 +17,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
-import com.howest.skyeye.ui.theme.ThemeViewModel
+import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.settings.SettingsTopBar
+import com.howest.skyeye.ui.theme.ThemeViewModel
 import kotlinx.coroutines.launch
+
+object AppearanceDestination : NavigationDestination {
+    override val route: String = "appearance"
+    override val title: String = "Appearance"
+}
 
 @Composable
 fun AppearanceSettingsScreen(
-    navController: NavController,
+    navigateBack: () -> Unit,
     viewModel: ThemeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -35,7 +40,7 @@ fun AppearanceSettingsScreen(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        SettingsTopBar(navController, "Appearance settings")
+        SettingsTopBar(navigateBack, "Appearance settings")
         AppearanceSettingsItems(
             isDarkMode = mainUiState.isDarkMode,
             onDarkModeChange = {

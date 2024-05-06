@@ -27,29 +27,22 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.howest.skyeye.apirequest.ui.APIViewModel
+import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.airport.detail.Section
 import com.howest.skyeye.ui.airport.detail.TitleValueComponent
 import howest.nma.skyeye.R
 
+object AircraftDetailDestination : NavigationDestination {
+    override val route = "AircraftDetailScreen"
+    override val title = "Aircraft Detail Screen"
+    const val aircraftTypeArg = "aircraftType"
+    val routeWithArgs = "$route/{$aircraftTypeArg}"
+}
+
+
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun AircraftDetailScreen(aircraftType: String, navController: NavController) {
-    val apiViewModel: APIViewModel = viewModel()
-
-    /*LaunchedEffect(key1 = aircraftType) {
-        apiViewModel.getAircraftData(aircraftType)
-    }*/
-
-    /*when(apiUiState)
-        {
-            is APIUiState.Success -> Text(text = apiUiState.data, style = MaterialTheme.typography.bodyMedium)
-            is APIUiState.Loading -> Text(text = "Aircraft information loading...", style = MaterialTheme.typography.bodyMedium)
-            is APIUiState.Error -> Text(text = "Couldn't find the aircraft data, try again later!")
-        }*/
-
+fun AircraftDetailScreen(aircraftType: String, navigateBack: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,7 +58,7 @@ fun AircraftDetailScreen(aircraftType: String, navController: NavController) {
                     .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = navigateBack) {
                     Icon(
                         Icons.Rounded.ArrowBack,
                         contentDescription = "Back",

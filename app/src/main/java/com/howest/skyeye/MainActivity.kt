@@ -20,8 +20,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.howest.skyeye.ui.AppViewModelProvider
 import com.howest.skyeye.ui.SkyEyeApp
-import com.howest.skyeye.ui.theme.ThemeViewModel
 import com.howest.skyeye.ui.theme.SkyEyeTheme
+import com.howest.skyeye.ui.theme.ThemeViewModel
 import com.howest.skyeye.workers.ReminderWorker
 import java.util.concurrent.TimeUnit
 
