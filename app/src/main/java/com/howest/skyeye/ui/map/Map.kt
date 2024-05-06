@@ -36,13 +36,13 @@ fun MapView(
     showCompass: Boolean = true,
     userInteractionEnabled: Boolean = true,
     zoomValue: Double = 3.5,
-    selectedMapTypeSetting: MutableState<String>,
+    selectedMapTypeSetting: String,
     context: Context,
     showAirports: Boolean = false,
     cameraPositionState: MutableState<CameraPosition?>,
     navController: NavController
 ) {
-    val styleUrl = mapTypeToStyleUrl[selectedMapTypeSetting.value] ?: "https://api.maptiler.com/maps/basic-v2/style.json"
+    val styleUrl = mapTypeToStyleUrl[selectedMapTypeSetting] ?: "https://api.maptiler.com/maps/basic-v2/style.json"
     val airportData = remember { mutableStateOf<List<AirportMarkerData>?>(null) }
 
     LaunchedEffect(Unit) {

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.howest.skyeye.SkyEyeApplication
 import com.howest.skyeye.ui.core.MainViewModel
+import com.howest.skyeye.ui.home.modals.maptype.MapTypeViewModel
 import com.howest.skyeye.ui.home.modals.weather.WeatherViewModel
 
 object AppViewModelProvider {
@@ -16,6 +17,9 @@ object AppViewModelProvider {
         }
         initializer {
             WeatherViewModel()
+        }
+        initializer {
+            MapTypeViewModel()
         }
     }
 }

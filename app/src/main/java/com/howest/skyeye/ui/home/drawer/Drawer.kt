@@ -58,7 +58,7 @@ fun Drawer(navController: NavController) {
         gesturesEnabled = false,
         drawerContent = { DrawerContent(drawerState, scope, items, navController) },
         scrimColor = Color.Black.copy(alpha = 0.8f),
-        content = { HomeScreen(drawerState, scope, navController) }
+        content = { HomeScreen(drawerState = drawerState, scope = scope, navController = navController) }
     )
 }
 

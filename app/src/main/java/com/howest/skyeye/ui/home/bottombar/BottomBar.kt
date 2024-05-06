@@ -19,10 +19,9 @@ import com.howest.skyeye.ui.home.modals.weather.WeatherModal
 import howest.nma.skyeye.R
 
 @Composable
-fun BottomBar(navController: NavController, selectedMapTypeSetting: MutableState<String>) {
+fun BottomBar(navController: NavController) {
     var selectedItem by remember { mutableIntStateOf(-1) }
     var activeModal by remember { mutableStateOf("") }
-    var selectedWeatherSetting by remember { mutableStateOf("No weather") }
     val items = listOf(
         Pair(R.drawable.settings, "Settings"),
         Pair(R.drawable.weather, "Weather"),
@@ -49,9 +48,7 @@ fun BottomBar(navController: NavController, selectedMapTypeSetting: MutableState
     }
     when (activeModal) {
         "Weather" -> WeatherModal(onDismissRequest = { activeModal = "" })
-        "MapType" -> MapTypeModal(selectedMapTypeSetting, onDismissRequest = { activeModal = "" }) {
-            selectedMapTypeSetting.value = it
-        }
+        "MapType" -> MapTypeModal(onDismissRequest = { activeModal = "" })
         "Filters" -> FilterModal() { activeModal = "" }
     }
 }

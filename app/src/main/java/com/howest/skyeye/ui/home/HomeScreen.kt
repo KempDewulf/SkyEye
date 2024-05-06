@@ -4,13 +4,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.AppViewModelProvider
 import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.home.bottombar.BottomBar
+import com.howest.skyeye.ui.home.modals.maptype.MapTypeViewModel
 import com.howest.skyeye.ui.home.topbar.TopBar
 import com.howest.skyeye.ui.map.MapView
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -22,8 +27,8 @@ object HomeDestination : NavigationDestination {
 }
 
 @Composable
-fun HomeScreen(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
-    val selectedMapTypeSetting = remember { mutableStateOf("normal") }
+fun HomeScreen(viewModel: MapTypeViewModel = viewModel(factory = AppViewModelProvider.Factory), drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+    val uiState by viewModel.mapTypeUiState.collectAsState()
     val cameraPositionState = remember { mutableStateOf<CameraPosition?>(null) }
 
     Scaffold(
@@ -31,7 +36,7 @@ fun HomeScreen(drawerState: DrawerState, scope: CoroutineScope, navController: N
             TopBar(navController, drawerState, scope)
         },
         bottomBar = {
-            BottomBar(navController, selectedMapTypeSetting)
+            BottomBar(navController)
         }
     ) { paddingValues ->
         MapView(
@@ -40,7 +45,7 @@ fun HomeScreen(drawerState: DrawerState, scope: CoroutineScope, navController: N
             longitude = 4.47,
             context = LocalContext.current,
             showAirports = true,
-            selectedMapTypeSetting = selectedMapTypeSetting,
+            selectedMapTypeSetting = uiState.selectedMapTypeItem,
             cameraPositionState = cameraPositionState,
             navController = navController
         )

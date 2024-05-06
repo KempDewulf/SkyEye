@@ -19,6 +19,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -26,11 +28,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.howest.skyeye.ui.AppViewModelProvider
+import com.howest.skyeye.ui.home.modals.weather.WeatherViewModel
 import howest.nma.skyeye.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapTypeModal(activeItem: MutableState<String>, onDismissRequest: () -> Unit, onActiveItemChange: (String) -> Unit) {
+fun MapTypeModal(viewModel: MapTypeViewModel = viewModel(factory = AppViewModelProvider.Factory), onDismissRequest: () -> Unit) {
+    val uiState by viewModel.mapTypeUiState.collectAsState()
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = Modifier
@@ -46,12 +53,12 @@ fun MapTypeModal(activeItem: MutableState<String>, onDismissRequest: () -> Unit,
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    MapTypeModalItem(R.drawable.normal, "Normal", activeItem.value == "normal") {
-                        onActiveItemChange("normal")
+                    MapTypeModalItem(R.drawable.normal, "Normal", uiState.selectedMapTypeItem == "normal") {
+                        viewModel.setMapTypeItem("normal")
                     }
 
-                    MapTypeModalItem(R.drawable.terrain, "Terrain",  activeItem.value == "terrain") {
-                        onActiveItemChange("terrain")
+                    MapTypeModalItem(R.drawable.terrain, "Terrain",  uiState.selectedMapTypeItem == "terrain") {
+                        viewModel.setMapTypeItem("terrain")
                     }
                 }
             }
@@ -60,11 +67,11 @@ fun MapTypeModal(activeItem: MutableState<String>, onDismissRequest: () -> Unit,
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    MapTypeModalItem(R.drawable.satellite, "Satellite", activeItem.value == "satellite") {
-                        onActiveItemChange("satellite")
+                    MapTypeModalItem(R.drawable.satellite, "Satellite", uiState.selectedMapTypeItem == "satellite") {
+                        viewModel.setMapTypeItem("satellite")
                     }
-                    MapTypeModalItem(R.drawable.dark, "Dark", activeItem.value == "dark") {
-                        onActiveItemChange("dark")
+                    MapTypeModalItem(R.drawable.dark, "Dark", uiState.selectedMapTypeItem == "dark") {
+                        viewModel.setMapTypeItem("dark")
                     }
                 }
             }

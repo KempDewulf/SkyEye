@@ -53,7 +53,6 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
     val context = LocalContext.current
     var airportData: AirportApiData? = null
     var toast: Toast? = null
-    val airportMapTypeSetting = remember { mutableStateOf("satellite") }
 
     LaunchedEffect(key1 = icao) {
         apiViewModel.getAirportData(icao)
@@ -155,7 +154,7 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
                             showCompass = false,
                             userInteractionEnabled = false,
                             zoomValue = 11.5,
-                            selectedMapTypeSetting = airportMapTypeSetting,
+                            selectedMapTypeSetting = "satellite",
                             showAirports = false,
                             context = LocalContext.current,
                             cameraPositionState = remember { mutableStateOf(null) },
