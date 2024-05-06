@@ -27,16 +27,16 @@ object HomeDestination : NavigationDestination {
 }
 
 @Composable
-fun HomeScreen(viewModel: MapTypeViewModel = viewModel(factory = AppViewModelProvider.Factory), drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+fun HomeScreen(viewModel: MapTypeViewModel = viewModel(factory = AppViewModelProvider.Factory), drawerState: DrawerState, scope: CoroutineScope, navigateTo: (route: String) -> Unit) {
     val uiState by viewModel.mapTypeUiState.collectAsState()
     val cameraPositionState = remember { mutableStateOf<CameraPosition?>(null) }
 
     Scaffold(
         topBar = {
-            TopBar(navController, drawerState, scope)
+            TopBar(navigateTo, drawerState, scope)
         },
         bottomBar = {
-            BottomBar(navController)
+            BottomBar(navigateTo)
         }
     ) { paddingValues ->
         MapView(
@@ -47,7 +47,7 @@ fun HomeScreen(viewModel: MapTypeViewModel = viewModel(factory = AppViewModelPro
             showAirports = true,
             selectedMapTypeSetting = uiState.selectedMapTypeItem,
             cameraPositionState = cameraPositionState,
-            navController = navController
+            navigateTo = navigateTo
         )
     }
 }

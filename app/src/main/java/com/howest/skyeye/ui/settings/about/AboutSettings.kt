@@ -27,10 +27,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.settings.SettingsTopBar
 
+object AboutDestination : NavigationDestination {
+    override val route: String = "about"
+    override val title: String = "About"
+}
+
 @Composable
-fun AboutSettingsScreen(navController: NavController) {
+fun AboutSettingsScreen(navigateBack: () -> Unit) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -49,14 +55,14 @@ fun AboutSettingsScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            SettingsTopBar(navController, "About settings")
-            AboutSettingsItems(navController, items)
+            SettingsTopBar(navigateBack, "About settings")
+            AboutSettingsItems(items)
         }
     }
 }
 
 @Composable
-fun AboutSettingsItems(navController: NavController, items: List<String>) {
+fun AboutSettingsItems(items: List<String>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -64,7 +70,7 @@ fun AboutSettingsItems(navController: NavController, items: List<String>) {
     ) {
 
         items.forEachIndexed { index, item ->
-            AboutSettingsItem(navController,index, item)
+            AboutSettingsItem(item)
             if (index < items.size - 1) {
                 Divider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), thickness = 1.dp)
             }
@@ -73,7 +79,7 @@ fun AboutSettingsItems(navController: NavController, items: List<String>) {
 }
 
 @Composable
-fun AboutSettingsItem(navController: NavController, index: Int, item: String) {
+fun AboutSettingsItem(item: String) {
     val isClickable = item != "Build version"
     Box(
         modifier = Modifier

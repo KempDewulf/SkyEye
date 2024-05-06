@@ -41,13 +41,21 @@ import androidx.navigation.NavController
 import com.howest.skyeye.apirequest.ui.APIUiStateAirportApiData
 import com.howest.skyeye.apirequest.ui.APIViewModel
 import com.howest.skyeye.ui.AirportApiData
+import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.map.MapView
 import howest.nma.skyeye.R
 
+object AirportDetailDestination : NavigationDestination {
+    override val route = "AirportDetailScreen"
+    override val title = "Airport Detail Screen"
+    const val IcaoArg = "icao"
+    const val airportNameArg = "airportName"
+    val routeWithArgs = "$route/{$IcaoArg}/{$airportNameArg}"
+}
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun AirportDetailScreen(icao: String, airportName: String, navController: NavController) {
+fun AirportDetailScreen(icao: String, airportName: String, navigateTo: (route: String) -> Unit, navigateBack: () -> Unit){
     val apiViewModel: APIViewModel = viewModel()
     val apiUiState : APIUiStateAirportApiData = apiViewModel.apiUiState
     var details = emptyList<Pair<String, Any>>()
@@ -91,7 +99,7 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
                     .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = navigateBack) {
                     Icon(
                         Icons.Rounded.ArrowBack,
                         contentDescription = "Back",
@@ -159,7 +167,7 @@ fun AirportDetailScreen(icao: String, airportName: String, navController: NavCon
                             showAirports = false,
                             context = LocalContext.current,
                             cameraPositionState = remember { mutableStateOf(null) },
-                            navController = navController
+                            navigateTo = navigateTo
                         )
                     }
                 }

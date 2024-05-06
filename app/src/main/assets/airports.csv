@@ -1,5 +1,4 @@
 id,ident,type,name,latitude_deg,longitude_deg,elevation_ft,continent,iso_country,iso_region,municipality,scheduled_service,gps_code,iata_code,local_code,home_link,wikipedia_link,keywords,full_country_name
-12243,5A8,medium_airport,Aleknagik / New Airport,59.2826004028,-158.617996216,66.0,,US,US-AK,Aleknagik,yes,5A8,WKK,5A8,,https://en.wikipedia.org/wiki/Aleknagik_Airport,,United States
 332240,AF-0005,medium_airport,"""Ghost"" International Airport",33.284605,69.80734,4204.0,AS,AF,AF-KHO,Khost,no,OAKS,KHT,,http://web.archive.org/web/20230123103904/http://pajhwok.com/2021/06/03/set-to-open-soon-khost-airport-lacks-global-standards/,,,Afghanistan
 3,AGGH,large_airport,Honiara International Airport,-9.428,160.054993,28.0,OC,SB,SB-GU,Honiara,yes,AGGH,HIR,,,https://en.wikipedia.org/wiki/Honiara_International_Airport,Henderson Field,Solomon Islands
 4,AGGM,medium_airport,Munda Airport,-8.32797,157.263,10.0,OC,SB,SB-WE,Munda,yes,AGGM,MUA,,,https://en.wikipedia.org/wiki/Munda_Airport,,Solomon Islands

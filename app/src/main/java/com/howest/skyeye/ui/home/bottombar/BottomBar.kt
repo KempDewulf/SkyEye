@@ -18,7 +18,7 @@ import com.howest.skyeye.ui.home.modals.weather.WeatherModal
 import howest.nma.skyeye.R
 
 @Composable
-fun BottomBar(navController: NavController) {
+fun BottomBar(navigateTo: (route: String) -> Unit){
     var selectedItem by remember { mutableIntStateOf(-1) }
     var activeModal by remember { mutableStateOf("") }
     val items = listOf(
@@ -39,7 +39,7 @@ fun BottomBar(navController: NavController) {
                     if (label in listOf("Weather", "MapType", "Filters")) {
                         activeModal = label
                     } else {
-                        navController.navigate(label.lowercase())
+                        navigateTo(label.lowercase())
                     }
                 }
             )

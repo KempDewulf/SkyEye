@@ -39,12 +39,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.AircraftData
 import com.howest.skyeye.ui.ManufacturerAndAircraft
+import com.howest.skyeye.ui.NavigationDestination
+import com.howest.skyeye.ui.aircraft.detail.AircraftDetailDestination
 
-@OptIn(ExperimentalComposeUiApi::class)
+object SeeAllAircraftTypesDestination : NavigationDestination {
+    override val route: String = "seeAllAircraftTypes"
+    override val title: String = "See All Aircraft Types"
+}
 @Composable
-fun AircraftsScreen(navController: NavController) {
+fun AircraftsScreen(navigateTo: (route: String) -> Unit, navigateBack: () -> Unit) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    // Move the isExpanded variable here
     var expandedAircrafts by remember { mutableStateOf(setOf<String>()) }
 
     Column(
@@ -62,7 +66,7 @@ fun AircraftsScreen(navController: NavController) {
                     .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = navigateBack) {
                     Icon(
                         Icons.Rounded.ArrowBack,
                         contentDescription = "Back",
@@ -107,12 +111,12 @@ fun AircraftsScreen(navController: NavController) {
                 .padding(bottom = 16.dp)
         )
 
-        AircraftList(navController, expandedAircrafts, searchText) { aircraft -> expandedAircrafts = toggleAircraftType(expandedAircrafts, aircraft) }
+        AircraftList(navigateTo, expandedAircrafts, searchText) { aircraft -> expandedAircrafts = toggleAircraftType(expandedAircrafts, aircraft) }
     }
 }
 
 @Composable
-fun AircraftList(navController: NavController, expandedAircrafts: Set<String>, searchText: String, onToggle: (String) -> Unit) {
+fun AircraftList(navigateTo: (route: String) -> Unit, expandedAircrafts: Set<String>, searchText: String, onToggle: (String) -> Unit) {
     val aircraftsByType = mapOf(
         "A220" to ManufacturerAndAircraft("Airbus", listOf(
             AircraftData("A220-100"),
@@ -143,7 +147,7 @@ fun AircraftList(navController: NavController, expandedAircrafts: Set<String>, s
             if (expandedAircrafts.contains(type)) {
                 val filteredAircrafts = data.aircraft.filter { it.name.contains(searchText, ignoreCase = true) }
                 items(filteredAircrafts) { aircraft ->
-                    AircraftItem(navController, aircraft.name)
+                    AircraftItem(navigateTo, aircraft.name)
                 }
             }
         }
@@ -179,7 +183,7 @@ fun AircraftTypeItem(manufacturer: String, aircraftType: String, onClick: () -> 
 }
 
 @Composable
-fun AircraftItem(navController: NavController, aircraftType: String) {
+fun AircraftItem(navigateTo: (route: String) -> Unit, aircraftType: String) {
     // Each airport item under the country
     Column(
         modifier = Modifier
@@ -187,7 +191,7 @@ fun AircraftItem(navController: NavController, aircraftType: String) {
             .padding(8.dp)
             .padding(start = 16.dp) // Add left padding for child items
             .clickable {
-                navController.navigate("AircraftDetailScreen/$aircraftType")
+                navigateTo(AircraftDetailDestination.route + "/$aircraftType")
             },
     ) {
         Row(

@@ -54,12 +54,18 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.NavigationDestination
 import howest.nma.skyeye.R
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+object CameraDestination : NavigationDestination {
+    override val route: String = "camera"
+    override val title: String = "Camera"
+}
+
 @Composable
-fun CameraScreen(navController: NavController) {
+fun CameraScreen(navigateBack: () -> Unit) {
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -86,7 +92,7 @@ fun CameraScreen(navController: NavController) {
             { previewView },
             modifier = Modifier.fillMaxSize()
         )
-        CameraTopBar(navController)
+        CameraTopBar(navigateBack)
         camera?.let { ZoomSlider(it.cameraControl) }
         InfoTypeToggle()
     }
@@ -128,9 +134,9 @@ private fun setTouchListener(view: View, scaleGestureDetector: ScaleGestureDetec
 }
 
 @Composable
-fun BoxScope.CameraTopBar(navController: NavController) {
+fun BoxScope.CameraTopBar(navigateBack: () -> Unit) {
     IconButton(
-        onClick = { navController.popBackStack() },
+        onClick = navigateBack,
         modifier = Modifier
             .align(Alignment.TopStart)
             .padding(16.dp)
@@ -209,7 +215,7 @@ private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
     }
 
 @Composable
-fun OpenCamera(context: Context, navController: NavController) {
+fun OpenCamera(context: Context, navigateTo: (route: String) -> Unit, navigateBack: () -> Unit) {
     var permissionGranted by remember { mutableStateOf(false) }
 
     val cameraPermissionRequest = rememberLauncherForActivityResult(
@@ -220,7 +226,7 @@ fun OpenCamera(context: Context, navController: NavController) {
 
     when (PackageManager.PERMISSION_GRANTED) {
         ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) -> {
-            CameraScreen(navController)
+            CameraScreen(navigateBack)
         } else -> {
         LaunchedEffect(Unit) {
             cameraPermissionRequest.launch(Manifest.permission.CAMERA)
@@ -230,7 +236,7 @@ fun OpenCamera(context: Context, navController: NavController) {
 
     LaunchedEffect(permissionGranted) {
         if (permissionGranted) {
-            navController.navigate("camera")
+            navigateTo(CameraDestination.route)
         }
     }
 }

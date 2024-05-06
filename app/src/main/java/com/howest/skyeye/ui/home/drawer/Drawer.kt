@@ -37,12 +37,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.home.HomeScreen
+import com.howest.skyeye.ui.user.LoginDestination
+import com.howest.skyeye.ui.user.RegisterDestination
 import howest.nma.skyeye.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun Drawer(navController: NavController) {
+fun Drawer(navigateTo: (route: String) -> Unit) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val items = listOf(
@@ -56,27 +58,27 @@ fun Drawer(navController: NavController) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = false,
-        drawerContent = { DrawerContent(drawerState, scope, items, navController) },
+        drawerContent = { DrawerContent(drawerState, scope, items, navigateTo) },
         scrimColor = Color.Black.copy(alpha = 0.8f),
-        content = { HomeScreen(drawerState = drawerState, scope = scope, navController = navController) }
+        content = { HomeScreen(drawerState = drawerState, scope = scope, navigateTo = navigateTo) }
     )
 }
 
 @Composable
-fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Triple<Int, String, String>>, navController: NavController) {
+fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Triple<Int, String, String>>, navigateTo: (route: String) -> Unit) {
     ModalDrawerSheet(
         drawerShape = RectangleShape,
         modifier = Modifier
             .fillMaxHeight()
             .width(300.dp)
     ) {
-        DrawerHeader(drawerState, scope, navController)
-        DrawerItems(items, drawerState, scope, navController)
+        DrawerHeader(drawerState, scope, navigateTo)
+        DrawerItems(items, drawerState, scope, navigateTo)
     }
 }
 
 @Composable
-fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navigateTo: (route: String) -> Unit) {
     Spacer(Modifier.height(12.dp))
     Row(
         modifier = Modifier
@@ -99,7 +101,7 @@ fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController:
             TextButton(onClick = {
                 scope.launch {
                     drawerState.close()
-                    navController.navigate("register")
+                    navigateTo(RegisterDestination.route)
                 } }) {
                 Text(text = "Register", fontSize = 22.sp)
             }
@@ -107,7 +109,7 @@ fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController:
             TextButton(onClick = {
                 scope.launch {
                     drawerState.close()
-                    navController.navigate("login")
+                    navigateTo(LoginDestination.route)
                 } }) {
                 Text(text = "Log in", fontSize = 22.sp)
             }
@@ -126,7 +128,7 @@ fun DrawerItem(
     iconId: Int,
     label: String,
     destination: String,
-    navController: NavController,
+    navigateTo: (route: String) -> Unit,
     onClick: () -> Unit,
     bottomPadding: Dp = 0.dp // Default padding is 0.dp
 ) {
@@ -150,7 +152,7 @@ fun DrawerItem(
         selected = false,
         onClick = {
             onClick()
-            navController.navigate(destination)
+            navigateTo(destination)
         },
         modifier = Modifier
             .padding(NavigationDrawerItemDefaults.ItemPadding)
@@ -165,7 +167,7 @@ fun DrawerItem(
 }
 
 @Composable
-fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerState, scope: CoroutineScope, navigateTo: (route: String) -> Unit) {
     Column {
         // Top items
         items.filter { it.second != "Settings" }.forEach { item ->
@@ -173,7 +175,7 @@ fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerSta
                 iconId = item.first,
                 label = item.second,
                 destination = item.third,
-                navController = navController,
+                navigateTo = navigateTo,
                 onClick = { scope.launch { drawerState.close() } }
             )
         }
@@ -187,7 +189,7 @@ fun DrawerItems(items: List<Triple<Int, String, String>>, drawerState: DrawerSta
                 iconId = settingsItem.first,
                 label = settingsItem.second,
                 destination = settingsItem.third,
-                navController = navController,
+                navigateTo = navigateTo,
                 onClick = { scope.launch { drawerState.close() } },
                 bottomPadding = 16.dp // Adjust the padding as needed
             )

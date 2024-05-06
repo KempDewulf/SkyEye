@@ -41,10 +41,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.AirportInfo
+import com.howest.skyeye.ui.NavigationDestination
+import com.howest.skyeye.ui.airport.detail.AirportDetailDestination
 
-@OptIn(ExperimentalComposeUiApi::class)
+object SeeAllAirportsDestination : NavigationDestination {
+    override val route: String = "seeAllAirports"
+    override val title: String = "See All Airports"
+}
+
 @Composable
-fun AirportsScreen(navController: NavController) {
+fun AirportsScreen(navigateTo: (route: String) -> Unit, navigateBack: () -> Unit) {
     val keyboardController = LocalSoftwareKeyboardController.current
     // Move the isExpanded variable here
     var expandedCountries by remember { mutableStateOf(setOf<String>()) }
@@ -64,7 +70,7 @@ fun AirportsScreen(navController: NavController) {
                     .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = navigateBack) {
                     Icon(
                         Icons.Rounded.ArrowBack,
                         contentDescription = "Back",
@@ -109,12 +115,12 @@ fun AirportsScreen(navController: NavController) {
                 .padding(bottom = 16.dp)
         )
 
-        AirportList(navController, expandedCountries, searchText) { country -> expandedCountries = toggleCountry(expandedCountries, country) }
+        AirportList(navigateTo, expandedCountries, searchText) { country -> expandedCountries = toggleCountry(expandedCountries, country) }
     }
 }
 
 @Composable
-fun AirportList(navController: NavController, expandedCountries: Set<String>, searchText: String, onToggle: (String) -> Unit) {
+fun AirportList(navigateTo: (route: String) -> Unit, expandedCountries: Set<String>, searchText: String, onToggle: (String) -> Unit) {
     val context = LocalContext.current
     val airportData = remember { mutableStateOf<List<AirportInfo>?>(null) }
 
@@ -148,7 +154,7 @@ fun AirportList(navController: NavController, expandedCountries: Set<String>, se
                         airports.filter { it.ICAO.contains(searchText, ignoreCase = true) || it.name.contains(searchText, ignoreCase = true) }
                     }
                     items(filteredAirports) { airport ->
-                        AirportItem(navController, airport.name, airport.ICAO)
+                        AirportItem(navigateTo, airport.name, airport.ICAO)
                     }
                 }
             }
@@ -188,7 +194,7 @@ fun CountryItem(airportInfo: AirportInfo, onClick: () -> Unit, isExpanded: Boole
 }
 
 @Composable
-fun AirportItem(navController: NavController, airportName: String, ICAO: String) {
+fun AirportItem(navigateTo: (route: String) -> Unit, airportName: String, ICAO: String) {
     // Each airport item under the country
     Column(
         modifier = Modifier
@@ -196,7 +202,7 @@ fun AirportItem(navController: NavController, airportName: String, ICAO: String)
             .padding(8.dp)
             .padding(start = 16.dp) // Add left padding for child items
             .clickable {
-                navController.navigate("AirportDetailScreen/$ICAO/$airportName")
+                navigateTo(AirportDetailDestination.route + "/$ICAO/$airportName")
             },
     ) {
         // Label on top

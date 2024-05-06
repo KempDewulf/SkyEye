@@ -14,18 +14,31 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.howest.skyeye.ui.aircraft.detail.AircraftDetailScreen
 import com.howest.skyeye.ui.aircraft.AircraftsScreen
+import com.howest.skyeye.ui.aircraft.SeeAllAircraftTypesDestination
+import com.howest.skyeye.ui.aircraft.detail.AircraftDetailDestination
 import com.howest.skyeye.ui.airport.detail.AirportDetailScreen
 import com.howest.skyeye.ui.airport.AirportsScreen
+import com.howest.skyeye.ui.airport.SeeAllAirportsDestination
+import com.howest.skyeye.ui.airport.detail.AirportDetailDestination
+import com.howest.skyeye.ui.camera.CameraDestination
 import com.howest.skyeye.ui.user.ForgotPasswordScreen
 import com.howest.skyeye.ui.user.LoginAndRegisterScreen
 import com.howest.skyeye.ui.camera.OpenCamera
 import com.howest.skyeye.ui.home.HomeDestination
 import com.howest.skyeye.ui.home.drawer.Drawer
+import com.howest.skyeye.ui.settings.SettingsDestination
 import com.howest.skyeye.ui.settings.SettingsScreen
+import com.howest.skyeye.ui.settings.about.AboutDestination
 import com.howest.skyeye.ui.settings.about.AboutSettingsScreen
+import com.howest.skyeye.ui.settings.account.AccountDestination
 import com.howest.skyeye.ui.settings.account.AccountSettingsScreen
+import com.howest.skyeye.ui.settings.appearance.AppearanceDestination
 import com.howest.skyeye.ui.settings.appearance.AppearanceSettingsScreen
+import com.howest.skyeye.ui.settings.support.SupportDestination
 import com.howest.skyeye.ui.settings.support.SupportSettingsScreen
+import com.howest.skyeye.ui.user.ForgotPasswordDestination
+import com.howest.skyeye.ui.user.LoginDestination
+import com.howest.skyeye.ui.user.RegisterDestination
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
@@ -48,65 +61,65 @@ fun SkyEyeNavHost(
         navController = navController,
         startDestination = HomeDestination.route,
     ) {
-        composable(HomeDestination.route) {
-            Drawer(navController)
+        composable(route = HomeDestination.route) {
+            Drawer(navigateTo = { navController.navigate(it) })
         }
-        composable("login") {
-            LoginAndRegisterScreen(navController = navController, false)
+        composable(route = LoginDestination.route) {
+            LoginAndRegisterScreen(false, navigateTo = { navController.navigate(it) })
         }
-        composable("register") {
-            LoginAndRegisterScreen(navController = navController, true)
+        composable(route = RegisterDestination.route) {
+            LoginAndRegisterScreen(true, navigateTo = { navController.navigate(it) })
         }
-        composable("forgotPassword") {
-            ForgotPasswordScreen(navController = navController)
+        composable(route = ForgotPasswordDestination.route) {
+            ForgotPasswordScreen(navigateTo = { navController.navigate(it) })
         }
-        composable("camera") {
-            OpenCamera(context, navController)
+        composable(route = CameraDestination.route) {
+            OpenCamera(context, navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
         }
-        composable("seeAllAircraftTypes") {
-            AircraftsScreen(navController)
+        composable(route = SeeAllAircraftTypesDestination.route) {
+            AircraftsScreen(navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
         }
-        composable("seeAllAirports") {
-            AirportsScreen(navController)
+        composable(route = SeeAllAirportsDestination.route) {
+            AirportsScreen(navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
         }
-        navigation(startDestination = "main", route = "settings") {
+        navigation(startDestination = "main", route = SettingsDestination.route) {
             composable("main") {
-                SettingsScreen(navController)
+                SettingsScreen(navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
             }
-            composable("account") {
-                AccountSettingsScreen(navController)
+            composable(route = AccountDestination.route) {
+                AccountSettingsScreen(navigateBack = { navController.navigateUp() })
             }
-            composable("appearance") {
-                AppearanceSettingsScreen(navController)
+            composable(route = AppearanceDestination.route) {
+                AppearanceSettingsScreen(navigateBack = { navController.navigateUp() })
             }
-            composable("com/howest/skyeye/ui/settings/support") {
-                SupportSettingsScreen(navController)
+            composable(route = SupportDestination.route) {
+                SupportSettingsScreen(navigateBack = { navController.navigateUp() })
             }
-            composable("About") {
-                AboutSettingsScreen(navController)
+            composable(route = AboutDestination.route) {
+                AboutSettingsScreen(navigateBack = { navController.navigateUp() })
             }
         }
         composable(
-            route = "AirportDetailScreen/{icao}/{airportName}",
+            route = AirportDetailDestination.routeWithArgs,
             arguments = listOf(
-                navArgument("icao") { type = NavType.StringType },
-                navArgument("airportName") { type = NavType.StringType }
+                navArgument(AirportDetailDestination.IcaoArg) { type = NavType.StringType },
+                navArgument(AirportDetailDestination.airportNameArg) { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val icao = backStackEntry.arguments?.getString("icao")
-            val airportName = backStackEntry.arguments?.getString("airportName")
+            val icao = backStackEntry.arguments?.getString(AirportDetailDestination.IcaoArg)
+            val airportName = backStackEntry.arguments?.getString(AirportDetailDestination.airportNameArg)
             if (icao != null && airportName != null) {
-                AirportDetailScreen(icao, airportName, navController = navController)
+                AirportDetailScreen(icao, airportName, navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
             }
         }
         composable(
-            route = "AircraftDetailScreen/{aircraftType}",
+            route = AircraftDetailDestination.routeWithArgs,
             arguments = listOf(
-                navArgument("aircraftType") { type = NavType.StringType },
+                navArgument(AircraftDetailDestination.aircraftTypeArg) { type = NavType.StringType },
             )
         ) { backStackEntry ->
-            backStackEntry.arguments?.getString("aircraftType")?.let { aircraftType ->
-                AircraftDetailScreen(aircraftType, navController = navController)
+            backStackEntry.arguments?.getString(AircraftDetailDestination.aircraftTypeArg)?.let { aircraftType ->
+                AircraftDetailScreen(aircraftType, navigateBack = { navController.navigateUp() })
             }
         }
     }

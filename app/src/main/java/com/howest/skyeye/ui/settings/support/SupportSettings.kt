@@ -36,11 +36,17 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.settings.SettingsTopBar
 import howest.nma.skyeye.R
 
+object SupportDestination : NavigationDestination {
+    override val route: String = "support"
+    override val title: String = "Support"
+}
+
 @Composable
-fun SupportSettingsScreen(navController: NavController) {
+fun SupportSettingsScreen(navigateBack: () -> Unit) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -51,7 +57,7 @@ fun SupportSettingsScreen(navController: NavController) {
         Column (
             modifier = Modifier.fillMaxSize()
         ) {
-            SettingsTopBar(navController, "Support")
+            SettingsTopBar(navigateBack, "Support")
             SupportForm()
         }
     }

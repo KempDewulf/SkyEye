@@ -15,11 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.settings.account.AccountDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun TopBar(navController: NavController, drawerState: DrawerState, scope: CoroutineScope) {
+fun TopBar(navigateTo: (route: String) -> Unit, drawerState: DrawerState, scope: CoroutineScope) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,7 +30,7 @@ fun TopBar(navController: NavController, drawerState: DrawerState, scope: Corout
         IconButton(onClick = { scope.launch { drawerState.open() } }) {
             Icon(Icons.Rounded.Menu, contentDescription = "menu", modifier = Modifier.size(32.dp))
         }
-        IconButton(onClick = { navController.navigate("account") }) {
+        IconButton(onClick = { navigateTo(AccountDestination.route) }) {
             Icon(Icons.Rounded.AccountCircle, contentDescription = "avatar", modifier = Modifier.size(36.dp))
         }
     }
