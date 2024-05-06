@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -61,10 +62,16 @@ fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainView
         greeting = "Create one SkyEye account for all your devices"
         actionWord = "Sign up"
     }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     val mainUiState by mainViewModel.mainUiState.collectAsState()
-    val userUiState by userViewModel.userUiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val isDarkMode = mainUiState.isDarkMode
+
+    fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})".toRegex()
+        return emailRegex.matches(email)
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -122,13 +129,11 @@ fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainView
             Column(
                 modifier = Modifier.fillMaxWidth(0.75f)
             ) {
-                var email by remember { mutableStateOf("") }
-                var password by remember { mutableStateOf("") }
                 var passwordVisibility by remember { mutableStateOf(false) }
-
                 TextField(
                     value = email,
                     onValueChange = { email = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     label = { Text("Email") },
                     modifier = Modifier
                         .padding(bottom = 5.dp)
@@ -137,7 +142,7 @@ fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainView
                 TextField(
                     value = password,
                     onValueChange = { password = it },
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     label = { Text("Password") },
                     trailingIcon = {
@@ -183,6 +188,7 @@ fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainView
                         }
                     },
                     shape = RoundedCornerShape(5.dp),
+                    enabled = isValidEmail(email) && password.isNotEmpty(),
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
