@@ -1,6 +1,6 @@
 package com.howest.skyeye.apirequest.network
 
-import com.howest.skyeye.AirportApiData
+import com.howest.skyeye.ui.airport.detail.AirportApiData
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory

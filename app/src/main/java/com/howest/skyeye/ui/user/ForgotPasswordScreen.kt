@@ -1,4 +1,4 @@
-package com.howest.skyeye
+package com.howest.skyeye.ui.user
 
 
 import androidx.compose.foundation.Image
@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,13 +33,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.AppViewModelProvider
+import com.howest.skyeye.ui.core.MainViewModel
 import howest.nma.skyeye.R
 
 
 @Composable
-fun ForgotPasswordScreen(navController: NavController, isDarkMode: Boolean) {
-    var greeting = "Forgot your password?"
+fun ForgotPasswordScreen(navController: NavController, viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+    val greeting = "Forgot your password?"
+    val mainUiState by viewModel.mainUiState.collectAsState()
+    val isDarkMode = mainUiState.isDarkMode
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background

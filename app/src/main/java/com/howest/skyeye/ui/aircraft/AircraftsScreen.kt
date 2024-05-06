@@ -1,4 +1,4 @@
-package com.howest.skyeye
+package com.howest.skyeye.ui.aircraft
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

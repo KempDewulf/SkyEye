@@ -1,4 +1,4 @@
-package com.howest.skyeye.settings
+package com.howest.skyeye.ui.settings.account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.settings.SettingsTopBar
 
 @Composable
 fun AccountSettingsScreen(navController: NavController) {
