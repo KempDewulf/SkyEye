@@ -16,14 +16,9 @@ class MainViewModel(private val userPreferencesRepositoryInterface: UserPreferen
 
     init {
         viewModelScope.launch {
-            loadUserPreferences()
-        }
-    }
-
-    private suspend fun loadUserPreferences() {
-        val lastUserPreferences = userPreferencesRepositoryInterface.userPreferences.firstOrNull()
-        if (lastUserPreferences != null) {
-            _mainUiState.value = MainUiState(isDarkMode = lastUserPreferences.is_dark_mode)
+            userPreferencesRepositoryInterface.userPreferences.collect { userPreferences ->
+                _mainUiState.value = MainUiState(isDarkMode = userPreferences?.is_dark_mode ?: false)
+            }
         }
     }
 
