@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.AirportMarkerData
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
@@ -229,5 +230,3 @@ fun readAirportData(context: Context): List<AirportMarkerData> {
     }
     return airportData
 }
-
-data class AirportMarkerData(val name: String, val latitude: Double, val longitude: Double, val icao: String)

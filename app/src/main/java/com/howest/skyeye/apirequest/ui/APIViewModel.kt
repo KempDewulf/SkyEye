@@ -8,9 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.howest.skyeye.ui.airport.detail.AirportApiData
-import com.howest.skyeye.ui.airport.AirportData
 import com.howest.skyeye.apirequest.network.skyEyeApi
+import com.howest.skyeye.ui.AirportApiData
+import com.howest.skyeye.ui.AirportData
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException

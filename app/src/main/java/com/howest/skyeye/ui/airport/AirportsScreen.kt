@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.AirportInfo
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -236,5 +237,3 @@ fun readAirportInfo(context: Context): List<AirportInfo> {
     return airportData
 }
 
-data class AirportInfo(val country: String, val ICAO: String, val name: String, val fullCountryName: String)
-data class AirportData(val name: String, val ICAO: String)
