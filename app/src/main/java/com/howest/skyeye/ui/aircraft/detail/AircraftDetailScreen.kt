@@ -1,4 +1,4 @@
-package com.howest.skyeye
+package com.howest.skyeye.ui.aircraft.detail
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
@@ -29,6 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.airport.detail.Section
+import com.howest.skyeye.ui.airport.detail.TitleValueComponent
 import com.howest.skyeye.apirequest.ui.APIViewModel
 import howest.nma.skyeye.R
 

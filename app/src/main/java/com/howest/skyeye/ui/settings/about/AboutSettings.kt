@@ -1,4 +1,4 @@
-package com.howest.skyeye.ui.settings
+package com.howest.skyeye.ui.settings.about
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.howest.skyeye.buildVersion
+import com.howest.skyeye.ui.settings.SettingsTopBar
 
 @Composable
 fun AboutSettingsScreen(navController: NavController) {
@@ -126,7 +126,7 @@ fun BuildVersionItem(item: String) {
                 .padding(start = 10.dp)
         )
         Text(
-            text = buildVersion,
+            text = "1.0.0",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.End,

@@ -1,4 +1,4 @@
-package com.howest.skyeye
+package com.howest.skyeye.ui.home.modals.filter
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically

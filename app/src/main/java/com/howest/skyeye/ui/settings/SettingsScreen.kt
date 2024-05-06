@@ -51,7 +51,7 @@ fun SettingsScreen(navController: NavController) {
             if (isUserLoggedIn) Triple("Account", "account",Icons.Rounded.AccountCircle)
             else Triple("Login or Sign up", "login" ,Icons.Rounded.AccountCircle),
             Triple("Appearance", "appearance",Icons.Rounded.Star),
-            Triple("Support", "support",Icons.Rounded.Build),
+            Triple("Support", "com/howest/skyeye/ui/settings/support",Icons.Rounded.Build),
             Triple("About", "about",Icons.Rounded.Info)
         )
 

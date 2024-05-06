@@ -1,10 +1,9 @@
-package com.howest.skyeye
+package com.howest.skyeye.ui.airport.detail
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
@@ -41,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.howest.skyeye.apirequest.ui.APIUiStateAirportApiData
 import com.howest.skyeye.apirequest.ui.APIViewModel
+import com.howest.skyeye.ui.map.MapView
 import howest.nma.skyeye.R
 
 

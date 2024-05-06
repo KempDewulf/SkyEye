@@ -1,6 +1,5 @@
-package com.howest.skyeye.ui.settings
+package com.howest.skyeye.ui.settings.appearance
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,27 +20,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.howest.skyeye.data.UserPreferences
 import com.howest.skyeye.data.UserPreferencesRepository
+import com.howest.skyeye.ui.AppViewModelProvider
+import com.howest.skyeye.ui.core.MainViewModel
+import com.howest.skyeye.ui.settings.SettingsTopBar
 import kotlinx.coroutines.launch
 
 @Composable
 fun AppearanceSettingsScreen(
     navController: NavController,
-    userPreferencesRepository: UserPreferencesRepository,
-    onDarkModeChange: (Boolean) -> Unit
+    viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val userPreferencesFlow = userPreferencesRepository.userPreferences
-    val userPreferences by userPreferencesFlow.collectAsState(initial = UserPreferences(is_dark_mode = false))
-    var isDarkMode by remember { mutableStateOf(userPreferences.is_dark_mode) }
     val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(userPreferencesFlow) {
-        userPreferencesFlow.collect { userPreferences ->
-            isDarkMode = userPreferences?.is_dark_mode ?: false
-        }
-    }
+    val mainUiState by viewModel.mainUiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -50,18 +44,10 @@ fun AppearanceSettingsScreen(
         SettingsTopBar(navController, "Appearance settings")
         AppearanceSettingsItems(
             navController = navController,
-            isDarkMode = userPreferences?.is_dark_mode ?: false,
-            onDarkModeChange = { newIsDarkMode ->
-                isDarkMode = newIsDarkMode
-                onDarkModeChange(newIsDarkMode)
+            isDarkMode = mainUiState.isDarkMode,
+            onDarkModeChange = {
                 coroutineScope.launch {
-                    val id = userPreferencesRepository.getLastInsertedId() ?: 0
-                    val newUserPreferences = UserPreferences(id = id, is_dark_mode = newIsDarkMode)
-                    if (id == 0) {
-                        userPreferencesRepository.insertUserPreferences(newUserPreferences)
-                    } else {
-                        userPreferencesRepository.updateUserPreferences(newUserPreferences)
-                    }
+                    viewModel.toggleDarkMode()
                 }
             }
         )
@@ -79,7 +65,10 @@ fun AppearanceSettingsItems(navController: NavController, isDarkMode: Boolean, o
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            DarkModeSwitch(isDarkMode = isDarkMode, onDarkModeChange = onDarkModeChange)
+            DarkModeSwitch(
+                isDarkMode = isDarkMode,
+                onDarkModeChange = onDarkModeChange
+            )
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.howest.skyeye
+package com.howest.skyeye.ui.home.modals.maptype
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border

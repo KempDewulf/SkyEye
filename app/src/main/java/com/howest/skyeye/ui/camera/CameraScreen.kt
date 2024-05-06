@@ -1,9 +1,13 @@
-package com.howest.skyeye
+package com.howest.skyeye.ui.camera
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraSelector
@@ -50,6 +54,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.home.HomeScreen
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import howest.nma.skyeye.R
@@ -203,3 +208,30 @@ private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
             }, ContextCompat.getMainExecutor(this))
         }
     }
+
+@Composable
+fun OpenCamera(context: Context, navController: NavController) {
+    var permissionGranted by remember { mutableStateOf(false) }
+
+    val cameraPermissionRequest = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        permissionGranted = isGranted
+    }
+
+    when (PackageManager.PERMISSION_GRANTED) {
+        ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) -> {
+            CameraScreen(navController)
+        } else -> {
+        LaunchedEffect(Unit) {
+            cameraPermissionRequest.launch(Manifest.permission.CAMERA)
+        }
+    }
+    }
+
+    LaunchedEffect(permissionGranted) {
+        if (permissionGranted) {
+            navController.navigate("camera")
+        }
+    }
+}

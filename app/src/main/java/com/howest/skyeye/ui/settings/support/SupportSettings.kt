@@ -1,7 +1,6 @@
-package com.howest.skyeye.ui.settings
+package com.howest.skyeye.ui.settings.support
 
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.Gravity
@@ -36,8 +35,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.res.TypedArrayUtils.getText
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.settings.SettingsTopBar
 import howest.nma.skyeye.R
 
 @Composable
