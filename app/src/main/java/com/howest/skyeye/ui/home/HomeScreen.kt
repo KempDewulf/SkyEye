@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
 import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.home.bottombar.BottomBar
@@ -28,16 +27,16 @@ object HomeDestination : NavigationDestination {
 }
 
 @Composable
-fun HomeScreen(userViewModel: UserViewModel, viewModel: MapTypeViewModel = viewModel(factory = AppViewModelProvider.Factory), drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+fun HomeScreen(userViewModel: UserViewModel, viewModel: MapTypeViewModel = viewModel(factory = AppViewModelProvider.Factory), drawerState: DrawerState, scope: CoroutineScope, navigateTo: (route: String) -> Unit) {
     val uiState by viewModel.mapTypeUiState.collectAsState()
     val cameraPositionState = remember { mutableStateOf<CameraPosition?>(null) }
 
     Scaffold(
         topBar = {
-            TopBar(userViewModel, navController, drawerState, scope)
+            TopBar(userViewModel = userViewModel, navigatoTo = navigateTo, drawerState = drawerState, scope = scope)
         },
         bottomBar = {
-            BottomBar(navController)
+            BottomBar(navigateTo)
         }
     ) { paddingValues ->
         MapView(
@@ -48,7 +47,7 @@ fun HomeScreen(userViewModel: UserViewModel, viewModel: MapTypeViewModel = viewM
             showAirports = true,
             selectedMapTypeSetting = uiState.selectedMapTypeItem,
             cameraPositionState = cameraPositionState,
-            navController = navController
+            navigateTo = navigateTo
         )
     }
 }

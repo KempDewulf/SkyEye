@@ -34,13 +34,18 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.settings.SettingsTopBar
 import com.howest.skyeye.ui.user.UserUiState
 import com.howest.skyeye.ui.user.UserViewModel
 
+object AccountDestination : NavigationDestination {
+    override val route: String = "account"
+    override val title: String = "Account"
+}
+
 @Composable
-fun AccountSettingsScreen(userViewModel: UserViewModel, navController: NavController) {
+fun AccountSettingsScreen(userViewModel: UserViewModel, navigateBack: () -> Unit) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
 
 
@@ -53,14 +58,14 @@ fun AccountSettingsScreen(userViewModel: UserViewModel, navController: NavContro
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            SettingsTopBar(navController, "Account settings")
-            AccountPage(userViewModel, navController)
+            SettingsTopBar(navigateBack, "Account settings")
+            AccountPage(userViewModel)
         }
     }
 }
 
 @Composable
-fun AccountPage(userViewModel: UserViewModel, navController: NavController) {
+fun AccountPage(userViewModel: UserViewModel,) {
     val focusManager = LocalFocusManager.current
     val userUiState by userViewModel.userUiState.collectAsState()
 

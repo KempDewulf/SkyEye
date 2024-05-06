@@ -5,21 +5,19 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.home.modals.filter.FilterModal
 import com.howest.skyeye.ui.home.modals.maptype.MapTypeModal
 import com.howest.skyeye.ui.home.modals.weather.WeatherModal
 import howest.nma.skyeye.R
 
 @Composable
-fun BottomBar(navController: NavController) {
+fun BottomBar(navigateTo: (route: String) -> Unit){
     var selectedItem by remember { mutableIntStateOf(-1) }
     var activeModal by remember { mutableStateOf("") }
     val items = listOf(
@@ -40,7 +38,7 @@ fun BottomBar(navController: NavController) {
                     if (label in listOf("Weather", "MapType", "Filters")) {
                         activeModal = label
                     } else {
-                        navController.navigate(label.lowercase())
+                        navigateTo(label.lowercase())
                     }
                 }
             )

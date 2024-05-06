@@ -31,7 +31,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -40,12 +39,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
 import com.howest.skyeye.ui.user.UserViewModel
+import com.howest.skyeye.ui.NavigationDestination
 
-@OptIn(ExperimentalComposeUiApi::class)
+object SettingsDestination : NavigationDestination {
+    override val route: String = "settings"
+    override val title: String = "Settings"
+}
+
 @Composable
-fun SettingsScreen(userViewModel: UserViewModel, navController: NavController) {
-    val userUiState by userViewModel.userUiState.collectAsState()
+fun SettingsScreen(userViewModel: UserViewModel, navigateTo: (route: String) -> Unit, navigateBack: () -> Unit) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
+    val userUiState by userViewModel.userUiState.collectAsState()
 
     LaunchedEffect(Unit) {
         isBackgroundLoaded = true
@@ -56,7 +60,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navController: NavController) {
             if (userUiState.isLoggedIn) Triple("Account", "account",Icons.Rounded.AccountCircle)
             else Triple("Login or Sign up", "login" ,Icons.Rounded.AccountCircle),
             Triple("Appearance", "appearance",Icons.Rounded.Star),
-            Triple("Support", "com/howest/skyeye/ui/settings/support",Icons.Rounded.Build),
+            Triple("Support", "support",Icons.Rounded.Build),
             Triple("About", "about",Icons.Rounded.Info)
         )
 
@@ -64,14 +68,14 @@ fun SettingsScreen(userViewModel: UserViewModel, navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            SettingsTopBar(navController)
-            SettingsItems(navController, items)
+            SettingsTopBar(navigateBack)
+            SettingsItems(navigateTo, items)
         }
     }
 }
 
 @Composable
-fun SettingsTopBar(navController: NavController, title: String = "Settings") {
+fun SettingsTopBar(navigateBack: () -> Unit, title: String = "Settings") {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +87,7 @@ fun SettingsTopBar(navController: NavController, title: String = "Settings") {
                 .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = navigateBack) {
                 Icon(
                     Icons.Rounded.ArrowBack,
                     contentDescription = "Back",
@@ -100,14 +104,14 @@ fun SettingsTopBar(navController: NavController, title: String = "Settings") {
 }
 
 @Composable
-fun SettingsItems(navController: NavController, items: List<Triple<String, String, ImageVector>>) {
+fun SettingsItems(navigateTo: (route: String) -> Unit, items: List<Triple<String, String, ImageVector>>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 40.dp, vertical = 20.dp)
     ) {
         items.forEachIndexed { index, (item, label, icon) ->
-            SettingsItem(navController,item, label)
+            SettingsItem(navigateTo,item, label)
             if (index < items.size - 1) {
                 HorizontalDivider(
                     thickness = 1.dp,
@@ -119,12 +123,12 @@ fun SettingsItems(navController: NavController, items: List<Triple<String, Strin
 }
 
 @Composable
-fun SettingsItem(navController: NavController, item: String, label: String) {
+fun SettingsItem(navigateTo: (route: String) -> Unit, item: String, label: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = {
-                navController.navigate(label)
+                navigateTo(label)
             })
     ) {
         Row(
@@ -155,28 +159,3 @@ fun SettingsItem(navController: NavController, item: String, label: String) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

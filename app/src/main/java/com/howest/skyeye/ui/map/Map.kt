@@ -12,7 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
+import com.howest.skyeye.ui.AirportMarkerData
+import com.howest.skyeye.ui.airport.detail.AirportDetailDestination
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
@@ -40,7 +41,7 @@ fun MapView(
     context: Context,
     showAirports: Boolean = false,
     cameraPositionState: MutableState<CameraPosition?>,
-    navController: NavController
+    navigateTo: (route: String) -> Unit
 ) {
     val styleUrl = mapTypeToStyleUrl[selectedMapTypeSetting] ?: "https://api.maptiler.com/maps/basic-v2/style.json"
     val airportData = remember { mutableStateOf<List<AirportMarkerData>?>(null) }
@@ -68,7 +69,7 @@ fun MapView(
                     context,
                     airportData.value,
                     cameraPositionState,
-                    navController
+                    navigateTo
                 )
             }
             mapView
@@ -87,7 +88,7 @@ fun MapView(
                     context,
                     airportData.value,
                     cameraPositionState,
-                    navController
+                    navigateTo
                 )
             }
         }
@@ -106,7 +107,7 @@ fun setupMap(
     context: Context,
     airportData: List<AirportMarkerData>?,
     cameraPositionState: MutableState<CameraPosition?>,
-    navController: NavController
+    navigateTo: (route: String) -> Unit
 ) {
     map.addOnCameraMoveListener {
         cameraPositionState.value = map.cameraPosition
@@ -196,7 +197,7 @@ fun setupMap(
                 val airportICAO = feature.getStringProperty("icao")
                 val airportName = feature.getStringProperty("name")
 
-                navController.navigate("AirportDetailScreen/$airportICAO/$airportName")
+                navigateTo(AirportDetailDestination.route + "/$airportICAO/$airportName")
                 return@addOnMapClickListener true
             }
         }
@@ -229,5 +230,3 @@ fun readAirportData(context: Context): List<AirportMarkerData> {
     }
     return airportData
 }
-
-data class AirportMarkerData(val name: String, val latitude: Double, val longitude: Double, val icao: String)

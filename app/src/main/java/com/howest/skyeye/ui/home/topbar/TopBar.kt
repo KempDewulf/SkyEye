@@ -18,11 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.user.UserViewModel
+import com.howest.skyeye.ui.settings.account.AccountDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun TopBar(userViewModel: UserViewModel, navController: NavController, drawerState: DrawerState, scope: CoroutineScope) {
+fun TopBar(userViewModel: UserViewModel, navigateTo: (route: String) -> Unit, drawerState: DrawerState, scope: CoroutineScope) {
     val userUiState by userViewModel.userUiState.collectAsState()
 
     Row(
@@ -36,10 +37,8 @@ fun TopBar(userViewModel: UserViewModel, navController: NavController, drawerSta
         }
         IconButton(
             onClick = {
-                if (userUiState.isLoggedIn) navController.navigate("account")
-                else navController.navigate("login")
+                if (userUiState.isLoggedIn) navigateTo(AccountDestination.route)
+                else navigateTo(LoginDestination.route)
             }) {
-            Icon(Icons.Rounded.AccountCircle, contentDescription = "avatar", modifier = Modifier.size(36.dp))
-        }
     }
 }

@@ -36,16 +36,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
-import com.howest.skyeye.ui.core.MainViewModel
+import com.howest.skyeye.ui.NavigationDestination
+import com.howest.skyeye.ui.home.HomeDestination
+import com.howest.skyeye.ui.theme.ThemeViewModel
 import howest.nma.skyeye.R
 
+object ForgotPasswordDestination : NavigationDestination {
+    override val route: String = "forgotPassword"
+    override val title: String = "Forgot Password"
+}
 
 @Composable
-fun ForgotPasswordScreen(navController: NavController, viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun ForgotPasswordScreen(navigateTo: (route: String) -> Unit, viewModel: ThemeViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val greeting = "Forgot your password?"
-    val mainUiState by viewModel.mainUiState.collectAsState()
+    val mainUiState by viewModel.themeUiState.collectAsState()
     val isDarkMode = mainUiState.isDarkMode
 
     Surface(
@@ -62,7 +67,7 @@ fun ForgotPasswordScreen(navController: NavController, viewModel: MainViewModel 
             Row(horizontalArrangement = Arrangement.Start, modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 10.dp)) {
-                IconButton(onClick = { navController.navigate("home")}) {
+                IconButton(onClick = { navigateTo(HomeDestination.route)}) {
                     Icon(
                         Icons.Rounded.Close,
                         contentDescription = "close",

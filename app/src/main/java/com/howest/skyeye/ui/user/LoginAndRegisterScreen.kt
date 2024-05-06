@@ -1,6 +1,5 @@
 package com.howest.skyeye.ui.user
 
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -47,15 +46,25 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
-import com.howest.skyeye.ui.core.MainViewModel
+import com.howest.skyeye.ui.NavigationDestination
+import com.howest.skyeye.ui.home.HomeDestination
+import com.howest.skyeye.ui.theme.ThemeViewModel
 import howest.nma.skyeye.R
 import kotlinx.coroutines.launch
 
+object LoginDestination : NavigationDestination {
+    override val route: String = "login"
+    override val title: String = "Login"
+}
+
+object RegisterDestination : NavigationDestination {
+    override val route: String = "register"
+    override val title: String = "Register"
+}
 
 @Composable
-fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory), navController: NavController, isRegister: Boolean) {
+fun LoginAndRegisterScreen(isRegister: Boolean, navigateTo: (route: String) -> Unit, userViewModel: UserViewModel, themeViewModel: ThemeViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     var greeting = "Log in to your SkyEye account"
     var actionWord = "Log in"
     if (isRegister) {
@@ -64,9 +73,9 @@ fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainView
     }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val mainUiState by mainViewModel.mainUiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val isDarkMode = mainUiState.isDarkMode
+    val themeUiState by themeViewModel.themeUiState.collectAsState()
+    val isDarkMode = themeUiState.isDarkMode
 
     fun isValidEmail(email: String): Boolean {
         val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})".toRegex()
@@ -88,7 +97,7 @@ fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainView
             Row(horizontalArrangement = Arrangement.Start, modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 10.dp)) {
-                IconButton(onClick = { navController.navigate("home")}) {
+                IconButton(onClick = { navigateTo(HomeDestination.route) }) {
                     Icon(
                         Icons.Rounded.Close,
                         contentDescription = "close",
@@ -169,7 +178,7 @@ fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainView
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        TextButton(onClick = { navController.navigate("forgotPassword")}) {
+                        TextButton(onClick = { navigateTo(ForgotPasswordDestination.route) }) {
                             Text(text = "Forgot password?")
                         }
                     }
@@ -208,7 +217,7 @@ fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainView
                         .align(Alignment.CenterVertically)
                         .padding(bottom = 1.dp)
                 )
-                TextButton(onClick = { navController.navigate(if (isRegister) "login" else "register") }) {
+                TextButton(onClick = { navigateTo( if(isRegister) LoginDestination.route else RegisterDestination.route) }) {
                     Text(text = if (isRegister) "Sign in" else "Sign up", fontSize = 18.sp, textDecoration = TextDecoration.Underline)
                 }
             }
