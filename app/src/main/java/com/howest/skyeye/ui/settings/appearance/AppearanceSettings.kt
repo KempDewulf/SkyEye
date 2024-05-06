@@ -19,17 +19,17 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
-import com.howest.skyeye.ui.core.MainViewModel
+import com.howest.skyeye.ui.theme.ThemeViewModel
 import com.howest.skyeye.ui.settings.SettingsTopBar
 import kotlinx.coroutines.launch
 
 @Composable
 fun AppearanceSettingsScreen(
     navController: NavController,
-    viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: ThemeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val mainUiState by viewModel.mainUiState.collectAsState()
+    val mainUiState by viewModel.themeUiState.collectAsState()
 
     Column(
         modifier = Modifier

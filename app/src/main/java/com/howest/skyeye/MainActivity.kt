@@ -20,7 +20,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.howest.skyeye.ui.AppViewModelProvider
 import com.howest.skyeye.ui.SkyEyeApp
-import com.howest.skyeye.ui.core.MainViewModel
+import com.howest.skyeye.ui.theme.ThemeViewModel
 import com.howest.skyeye.ui.theme.SkyEyeTheme
 import com.howest.skyeye.workers.ReminderWorker
 import java.util.concurrent.TimeUnit
@@ -41,8 +41,8 @@ class MainActivity() : ComponentActivity() {
         )
 
         setContent {
-            val mainViewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)
-            val mainUiState by mainViewModel.mainUiState.collectAsState()
+            val themeViewModel: ThemeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val mainUiState by themeViewModel.themeUiState.collectAsState()
 
             LaunchedEffect(mainUiState.isDarkMode) {
                 val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager

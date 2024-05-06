@@ -47,19 +47,19 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
-import com.howest.skyeye.ui.core.MainViewModel
+import com.howest.skyeye.ui.theme.ThemeViewModel
 import howest.nma.skyeye.R
 
 
 @Composable
-fun LoginAndRegisterScreen(navController: NavController, isRegister: Boolean, viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun LoginAndRegisterScreen(navController: NavController, isRegister: Boolean, viewModel: ThemeViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     var greeting = "Log in to your SkyEye account"
     var actionWord = "Log in"
     if (isRegister) {
         greeting = "Create one SkyEye account for all your devices"
         actionWord = "Sign up"
     }
-    val mainUiState by viewModel.mainUiState.collectAsState()
+    val mainUiState by viewModel.themeUiState.collectAsState()
     val isDarkMode = mainUiState.isDarkMode
 
     Surface(
