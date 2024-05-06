@@ -1,4 +1,4 @@
-package com.howest.skyeye.settings
+package com.howest.skyeye.ui.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

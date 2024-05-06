@@ -1,4 +1,4 @@
-package com.howest.skyeye.settings
+package com.howest.skyeye.ui.settings
 
 import android.content.ActivityNotFoundException
 import android.content.Context

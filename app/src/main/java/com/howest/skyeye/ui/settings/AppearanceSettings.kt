@@ -1,4 +1,4 @@
-package com.howest.skyeye.settings
+package com.howest.skyeye.ui.settings
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
