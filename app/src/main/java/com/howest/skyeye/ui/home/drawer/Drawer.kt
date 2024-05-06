@@ -37,12 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.home.HomeScreen
+import com.howest.skyeye.ui.user.UserViewModel
 import howest.nma.skyeye.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun Drawer(navController: NavController) {
+fun Drawer(userViewModel: UserViewModel, navController: NavController) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val items = listOf(
@@ -58,7 +59,7 @@ fun Drawer(navController: NavController) {
         gesturesEnabled = false,
         drawerContent = { DrawerContent(drawerState, scope, items, navController) },
         scrimColor = Color.Black.copy(alpha = 0.8f),
-        content = { HomeScreen(drawerState = drawerState, scope = scope, navController = navController) }
+        content = { HomeScreen(userViewModel = userViewModel, drawerState = drawerState, scope = scope, navController = navController) }
     )
 }
 

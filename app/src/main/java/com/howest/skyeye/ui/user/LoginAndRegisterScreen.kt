@@ -32,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,17 +50,20 @@ import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
 import com.howest.skyeye.ui.core.MainViewModel
 import howest.nma.skyeye.R
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun LoginAndRegisterScreen(navController: NavController, isRegister: Boolean, viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun LoginAndRegisterScreen(userViewModel: UserViewModel, mainViewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory), navController: NavController, isRegister: Boolean) {
     var greeting = "Log in to your SkyEye account"
     var actionWord = "Log in"
     if (isRegister) {
         greeting = "Create one SkyEye account for all your devices"
         actionWord = "Sign up"
     }
-    val mainUiState by viewModel.mainUiState.collectAsState()
+    val mainUiState by mainViewModel.mainUiState.collectAsState()
+    val userUiState by userViewModel.userUiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
     val isDarkMode = mainUiState.isDarkMode
 
     Surface(
@@ -168,7 +172,16 @@ fun LoginAndRegisterScreen(navController: NavController, isRegister: Boolean, vi
                     Spacer(modifier = Modifier.height(20.dp))
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        coroutineScope.launch {
+                            if (isRegister) {
+                                userViewModel.register(email, password)
+                            } else {
+                                userViewModel.login(email, password)
+                            }
+                            navController.navigate("home")
+                        }
+                    },
                     shape = RoundedCornerShape(5.dp),
                     modifier = Modifier
                         .fillMaxWidth()

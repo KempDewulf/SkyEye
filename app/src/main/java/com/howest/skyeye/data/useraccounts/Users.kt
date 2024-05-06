@@ -1,9 +1,10 @@
-package com.howest.skyeye.data.userAccounts
+package com.howest.skyeye.data.useraccounts
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "users")
+@Entity(tableName = "users", indices = [Index(value = ["email"], unique = true)])
 data class Users(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

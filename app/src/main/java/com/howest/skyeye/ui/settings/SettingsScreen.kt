@@ -1,5 +1,6 @@
 package com.howest.skyeye.ui.settings
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,19 +12,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,13 +36,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.AppViewModelProvider
+import com.howest.skyeye.ui.user.UserViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen(userViewModel: UserViewModel, navController: NavController) {
+    val userUiState by userViewModel.userUiState.collectAsState()
     var isBackgroundLoaded by remember { mutableStateOf(false) }
-    val isUserLoggedIn by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         isBackgroundLoaded = true
@@ -48,7 +53,7 @@ fun SettingsScreen(navController: NavController) {
 
     if (isBackgroundLoaded) {
         val items = listOf(
-            if (isUserLoggedIn) Triple("Account", "account",Icons.Rounded.AccountCircle)
+            if (userUiState.isLoggedIn) Triple("Account", "account",Icons.Rounded.AccountCircle)
             else Triple("Login or Sign up", "login" ,Icons.Rounded.AccountCircle),
             Triple("Appearance", "appearance",Icons.Rounded.Star),
             Triple("Support", "com/howest/skyeye/ui/settings/support",Icons.Rounded.Build),
@@ -104,7 +109,10 @@ fun SettingsItems(navController: NavController, items: List<Triple<String, Strin
         items.forEachIndexed { index, (item, label, icon) ->
             SettingsItem(navController,item, label)
             if (index < items.size - 1) {
-                Divider(color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f), thickness = 1.dp)
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                )
             }
         }
     }
@@ -137,10 +145,12 @@ fun SettingsItem(navController: NavController, item: String, label: String) {
                     .padding(start = 10.dp)
             )
             Icon(
-                imageVector = Icons.Rounded.KeyboardArrowRight,
+                imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                 contentDescription = "End Icon",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(30.dp).padding(top = 5.dp)
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(top = 5.dp)
             )
         }
     }

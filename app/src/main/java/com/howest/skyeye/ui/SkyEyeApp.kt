@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,6 +27,7 @@ import com.howest.skyeye.ui.settings.about.AboutSettingsScreen
 import com.howest.skyeye.ui.settings.account.AccountSettingsScreen
 import com.howest.skyeye.ui.settings.appearance.AppearanceSettingsScreen
 import com.howest.skyeye.ui.settings.support.SupportSettingsScreen
+import com.howest.skyeye.ui.user.UserViewModel
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
@@ -44,18 +46,20 @@ fun SkyEyeNavHost(
     navController: NavHostController,
     context: Context
 ) {
+    val userViewModel : UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
     NavHost(
         navController = navController,
         startDestination = HomeDestination.route,
     ) {
         composable(HomeDestination.route) {
-            Drawer(navController)
+            Drawer(userViewModel = userViewModel, navController)
         }
         composable("login") {
-            LoginAndRegisterScreen(navController = navController, false)
+            LoginAndRegisterScreen(userViewModel = userViewModel, navController = navController, isRegister = false)
         }
         composable("register") {
-            LoginAndRegisterScreen(navController = navController, true)
+            LoginAndRegisterScreen(userViewModel = userViewModel, navController = navController, isRegister = true)
         }
         composable("forgotPassword") {
             ForgotPasswordScreen(navController = navController)
@@ -71,10 +75,10 @@ fun SkyEyeNavHost(
         }
         navigation(startDestination = "main", route = "settings") {
             composable("main") {
-                SettingsScreen(navController)
+                SettingsScreen(userViewModel = userViewModel, navController = navController)
             }
             composable("account") {
-                AccountSettingsScreen(navController)
+                AccountSettingsScreen(userViewModel = userViewModel, navController)
             }
             composable("appearance") {
                 AppearanceSettingsScreen(navController)
