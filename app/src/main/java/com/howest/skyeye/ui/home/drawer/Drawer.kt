@@ -26,6 +26,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,27 +59,28 @@ fun Drawer(userViewModel: UserViewModel, navController: NavController) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = false,
-        drawerContent = { DrawerContent(drawerState, scope, items, navController) },
+        drawerContent = { DrawerContent(userViewModel, drawerState, scope, items, navController) },
         scrimColor = Color.Black.copy(alpha = 0.8f),
         content = { HomeScreen(userViewModel = userViewModel, drawerState = drawerState, scope = scope, navController = navController) }
     )
 }
 
 @Composable
-fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Triple<Int, String, String>>, navController: NavController) {
+fun DrawerContent(userViewModel: UserViewModel, drawerState: DrawerState, scope: CoroutineScope, items: List<Triple<Int, String, String>>, navController: NavController) {
     ModalDrawerSheet(
         drawerShape = RectangleShape,
         modifier = Modifier
             .fillMaxHeight()
             .width(300.dp)
     ) {
-        DrawerHeader(drawerState, scope, navController)
+        DrawerHeader(userViewModel, drawerState, scope, navController)
         DrawerItems(items, drawerState, scope, navController)
     }
 }
 
 @Composable
-fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+fun DrawerHeader(userViewModel: UserViewModel, drawerState: DrawerState, scope: CoroutineScope, navController: NavController) {
+    val userUiState by userViewModel.userUiState.collectAsState()
     Spacer(Modifier.height(12.dp))
     Row(
         modifier = Modifier
@@ -94,23 +97,33 @@ fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navController:
             )
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        if (userUiState.isLoggedIn) {
             TextButton(onClick = {
                 scope.launch {
                     drawerState.close()
-                    navController.navigate("register")
+                    navController.navigate("account")
                 } }) {
-                Text(text = "Register", fontSize = 22.sp)
+                Text(text = "Account", fontSize = 22.sp)
             }
-            Text(text = "or", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 22.sp)
-            TextButton(onClick = {
-                scope.launch {
-                    drawerState.close()
-                    navController.navigate("login")
-                } }) {
-                Text(text = "Log in", fontSize = 22.sp)
+        } else {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = {
+                    scope.launch {
+                        drawerState.close()
+                        navController.navigate("register")
+                    } }) {
+                    Text(text = "Register", fontSize = 22.sp)
+                }
+                Text(text = "or", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 22.sp)
+                TextButton(onClick = {
+                    scope.launch {
+                        drawerState.close()
+                        navController.navigate("login")
+                    } }) {
+                    Text(text = "Log in", fontSize = 22.sp)
+                }
             }
         }
     }
