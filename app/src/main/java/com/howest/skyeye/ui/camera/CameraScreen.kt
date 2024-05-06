@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.NavigationDestination
 import howest.nma.skyeye.R
 import kotlin.coroutines.resume

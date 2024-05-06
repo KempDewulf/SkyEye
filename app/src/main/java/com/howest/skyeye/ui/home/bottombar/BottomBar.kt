@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.home.modals.filter.FilterModal
 import com.howest.skyeye.ui.home.modals.maptype.MapTypeModal
 import com.howest.skyeye.ui.home.modals.weather.WeatherModal

@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
 import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.home.bottombar.BottomBar

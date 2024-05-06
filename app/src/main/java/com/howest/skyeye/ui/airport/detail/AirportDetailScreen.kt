@@ -37,7 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.howest.skyeye.apirequest.ui.APIUiStateAirportApiData
 import com.howest.skyeye.apirequest.ui.APIViewModel
 import com.howest.skyeye.ui.AirportApiData

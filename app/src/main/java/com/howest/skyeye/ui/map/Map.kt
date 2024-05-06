@@ -12,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.AirportMarkerData
 import com.howest.skyeye.ui.airport.detail.AirportDetailDestination
 import com.mapbox.geojson.Feature

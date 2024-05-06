@@ -12,17 +12,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.howest.skyeye.ui.aircraft.detail.AircraftDetailScreen
 import com.howest.skyeye.ui.aircraft.AircraftsScreen
 import com.howest.skyeye.ui.aircraft.SeeAllAircraftTypesDestination
 import com.howest.skyeye.ui.aircraft.detail.AircraftDetailDestination
-import com.howest.skyeye.ui.airport.detail.AirportDetailScreen
+import com.howest.skyeye.ui.aircraft.detail.AircraftDetailScreen
 import com.howest.skyeye.ui.airport.AirportsScreen
 import com.howest.skyeye.ui.airport.SeeAllAirportsDestination
 import com.howest.skyeye.ui.airport.detail.AirportDetailDestination
+import com.howest.skyeye.ui.airport.detail.AirportDetailScreen
 import com.howest.skyeye.ui.camera.CameraDestination
-import com.howest.skyeye.ui.user.ForgotPasswordScreen
-import com.howest.skyeye.ui.user.LoginAndRegisterScreen
 import com.howest.skyeye.ui.camera.OpenCamera
 import com.howest.skyeye.ui.home.HomeDestination
 import com.howest.skyeye.ui.home.drawer.Drawer
@@ -37,6 +35,8 @@ import com.howest.skyeye.ui.settings.appearance.AppearanceSettingsScreen
 import com.howest.skyeye.ui.settings.support.SupportDestination
 import com.howest.skyeye.ui.settings.support.SupportSettingsScreen
 import com.howest.skyeye.ui.user.ForgotPasswordDestination
+import com.howest.skyeye.ui.user.ForgotPasswordScreen
+import com.howest.skyeye.ui.user.LoginAndRegisterScreen
 import com.howest.skyeye.ui.user.LoginDestination
 import com.howest.skyeye.ui.user.RegisterDestination
 

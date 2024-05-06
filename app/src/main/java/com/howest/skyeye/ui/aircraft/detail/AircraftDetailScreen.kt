@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.airport.detail.Section
 import com.howest.skyeye.ui.airport.detail.TitleValueComponent
