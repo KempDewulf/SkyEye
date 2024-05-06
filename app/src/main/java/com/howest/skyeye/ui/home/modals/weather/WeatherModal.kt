@@ -16,6 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,11 +26,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.howest.skyeye.ui.AppViewModelProvider
 import howest.nma.skyeye.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeatherModal(activeItem: String, onDismissRequest: () -> Unit, onActiveItemChange: (String) -> Unit) {
+fun WeatherModal(viewModel: WeatherViewModel = viewModel(factory = AppViewModelProvider.Factory), onDismissRequest: () -> Unit) {
+    val uiState by viewModel.weatherUiState.collectAsState()
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = Modifier.height(700.dp)
@@ -39,8 +45,8 @@ fun WeatherModal(activeItem: String, onDismissRequest: () -> Unit, onActiveItemC
                 .padding(bottom = 50.dp)
         ) {
             item {
-                WeatherModalItem(R.drawable.none, "No weather", "No weather layer", activeItem == "No weather") {
-                    onActiveItemChange("No weather")
+                WeatherModalItem(R.drawable.none, "No weather", "No weather layer", uiState.selectedWeatherItem == "No weather") {
+                    viewModel.setWeatherItem("No weather")
                 }
             }
             item {
@@ -50,8 +56,8 @@ fun WeatherModal(activeItem: String, onDismissRequest: () -> Unit, onActiveItemC
                 )
             }
             item {
-                WeatherModalItem(R.drawable.clouds, "Cloud coverage", "Global IR Satellite provides cloud cover displayed on the map.", activeItem == "Cloud coverage") {
-                    onActiveItemChange("Cloud coverage")
+                WeatherModalItem(R.drawable.clouds, "Cloud coverage", "Global IR Satellite provides cloud cover displayed on the map.", uiState.selectedWeatherItem == "Cloud coverage") {
+                    viewModel.setWeatherItem("Cloud coverage")
                 }
             }
             item {
@@ -61,8 +67,8 @@ fun WeatherModal(activeItem: String, onDismissRequest: () -> Unit, onActiveItemC
                 )
             }
             item {
-                WeatherModalItem(R.drawable.rain, "Rain", "Overview of the current precipitation on our live map.", activeItem == "Rain") {
-                    onActiveItemChange("Rain")
+                WeatherModalItem(R.drawable.rain, "Rain", "Overview of the current precipitation on our live map.", uiState.selectedWeatherItem == "Rain") {
+                    viewModel.setWeatherItem("Rain")
                 }
             }
         }

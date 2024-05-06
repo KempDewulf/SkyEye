@@ -48,9 +48,7 @@ fun BottomBar(navController: NavController, selectedMapTypeSetting: MutableState
         }
     }
     when (activeModal) {
-        "Weather" -> WeatherModal(selectedWeatherSetting, onDismissRequest = { activeModal = "" }) {
-            selectedWeatherSetting = it
-        }
+        "Weather" -> WeatherModal(onDismissRequest = { activeModal = "" })
         "MapType" -> MapTypeModal(selectedMapTypeSetting, onDismissRequest = { activeModal = "" }) {
             selectedMapTypeSetting.value = it
         }
