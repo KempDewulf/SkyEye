@@ -1,5 +1,6 @@
 package com.howest.skyeye.ui.settings.appearance
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,7 +44,6 @@ fun AppearanceSettingsScreen(
     ) {
         SettingsTopBar(navController, "Appearance settings")
         AppearanceSettingsItems(
-            navController = navController,
             isDarkMode = mainUiState.isDarkMode,
             onDarkModeChange = {
                 coroutineScope.launch {
@@ -55,7 +55,7 @@ fun AppearanceSettingsScreen(
 }
 
 @Composable
-fun AppearanceSettingsItems(navController: NavController, isDarkMode: Boolean, onDarkModeChange: (Boolean) -> Unit) {
+fun AppearanceSettingsItems(isDarkMode: Boolean, onDarkModeChange: (Boolean) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -98,7 +98,9 @@ fun DarkModeSwitch(isDarkMode: Boolean, onDarkModeChange: (Boolean) -> Unit) {
                 onCheckedChange = { isChecked ->
                     onDarkModeChange(isChecked)
                 },
-                modifier = Modifier.size(30.dp).padding(top = 5.dp)
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(top = 5.dp)
             )
         }
     }
