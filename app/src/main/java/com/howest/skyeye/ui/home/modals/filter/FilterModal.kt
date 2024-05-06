@@ -32,7 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,12 +43,16 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.howest.skyeye.ui.AppViewModelProvider
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterModal(onDismissRequest: () -> Unit){
+fun FilterModal(viewModel : FilterViewModel = viewModel(factory = AppViewModelProvider.Factory), onDismissRequest: () -> Unit){
+    val uiState = viewModel.filterUiState.collectAsState()
     var expandedList by remember { mutableStateOf("") }
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         containerColor = MaterialTheme.colorScheme.inverseOnSurface,
@@ -70,27 +74,51 @@ fun FilterModal(onDismissRequest: () -> Unit){
                 )
             }
             item {
-                ExpandableList(title = "Airline", expandedList = expandedList, onExpandedChange = { expandedList = it }, airlineItems)
+                ExpandableList(
+                    title = "Airline",
+                    expandedList = expandedList,
+                    onExpandedChange = { expandedList = it },
+                    listItems = airlineItems,
+                    selectedItems = uiState.value.selectedAirlines,
+                    onItemCheckedChange = viewModel::updateSelectedAirline
+                )
                 HorizontalDivider(color = MaterialTheme.colorScheme.inverseOnSurface)
-                ExpandableList(title = "Aircraft", expandedList = expandedList, onExpandedChange = { expandedList = it }, aircraftItems)
+                ExpandableList(
+                    title = "Aircraft",
+                    expandedList = expandedList,
+                    onExpandedChange = { expandedList = it },
+                    listItems = aircraftItems,
+                    selectedItems = uiState.value.selectedAircraft,
+                    onItemCheckedChange = viewModel::updateSelectedAircraft
+                )
                 HorizontalDivider(color = MaterialTheme.colorScheme.inverseOnSurface)
-                ExpandableList(title = "Airport", expandedList = expandedList, onExpandedChange = { expandedList = it }, airportItems)
+                ExpandableList(
+                    title = "Airport",
+                    expandedList = expandedList,
+                    onExpandedChange = { expandedList = it },
+                    listItems = airportItems,
+                    selectedItems = uiState.value.selectedAirports,
+                    onItemCheckedChange = viewModel::updateSelectedAirport
+                )
             }
             item {
                 HorizontalDivider(color = MaterialTheme.colorScheme.inverseOnSurface)
                 val sliderState1 = remember { mutableStateOf(0f) }
-                SliderItem("Min. altitude", sliderState1, 0f..50000f, trailingText = "ft")
+                SliderItem("Min. altitude", uiState.value.minAltitude.toFloat(), 0f..50000f, "ft") { newValue ->
+                    viewModel.updateMinAltitude(newValue.roundToInt())
+                }
                 HorizontalDivider(color = MaterialTheme.colorScheme.inverseOnSurface)
                 val sliderState2 = remember { mutableStateOf(0f) }
-                SliderItem("Min. airspeed", sliderState2, 0f..800f, trailingText = "knots")
+                SliderItem("Min. airspeed", uiState.value.minSpeed.toFloat(), 0f..800f, "knots") { newValue ->
+                    viewModel.updateMinSpeed(newValue.roundToInt())
+                }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExpandableList(title: String, expandedList: String, onExpandedChange: (String) -> Unit, listItems: List<String>) {
+fun ExpandableList(title: String, expandedList: String, onExpandedChange: (String) -> Unit, listItems: List<String>, selectedItems: List<String>, onItemCheckedChange: (String, Boolean) -> Unit) {
     val expanded = expandedList == title
     var searchText by remember { mutableStateOf("") }
 
@@ -137,17 +165,17 @@ fun ExpandableList(title: String, expandedList: String, onExpandedChange: (Strin
                     LazyColumn {
                         val filteredItems = listItems.filter { it.contains(searchText, ignoreCase = true) }
                         items(filteredItems) { listItem ->
-                            var checked by remember { mutableStateOf(false) }
+                            var checked by remember { mutableStateOf(selectedItems.contains(listItem)) }
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { checked = !checked}
+                                    .clickable { checked = !checked; onItemCheckedChange(listItem, checked) }
                                     .padding(horizontal = 16.dp, vertical = 2.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Checkbox(
                                     checked = checked,
-                                    onCheckedChange = { checked = it },
+                                    onCheckedChange = { checked = it; onItemCheckedChange(listItem, checked) },
                                 )
                                 Text(text = listItem)
                             }
@@ -161,7 +189,7 @@ fun ExpandableList(title: String, expandedList: String, onExpandedChange: (Strin
 }
 
 @Composable
-fun SliderItem(text: String, sliderState: MutableState<Float>, range: ClosedFloatingPointRange<Float>, trailingText: String) {
+fun SliderItem(text: String, value: Float, range: ClosedFloatingPointRange<Float>, trailingText: String, onValueChange: (Float) -> Unit) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
@@ -179,14 +207,14 @@ fun SliderItem(text: String, sliderState: MutableState<Float>, range: ClosedFloa
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = "${(sliderState.value).roundToInt()} $trailingText",
+                text = "${(value).roundToInt()} $trailingText",
                 fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
         Slider(
-            value = sliderState.value,
-            onValueChange = { sliderState.value = it },
+            value = value,
+            onValueChange = onValueChange,
             valueRange = range,
         )
     }
