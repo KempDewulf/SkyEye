@@ -33,7 +33,7 @@ fun HomeScreen(userViewModel: UserViewModel, viewModel: MapTypeViewModel = viewM
 
     Scaffold(
         topBar = {
-            TopBar(userViewModel = userViewModel, navigatoTo = navigateTo, drawerState = drawerState, scope = scope)
+            TopBar(userViewModel = userViewModel, navigateTo = navigateTo, drawerState = drawerState, scope = scope)
         },
         bottomBar = {
             BottomBar(navigateTo)

@@ -114,7 +114,7 @@ fun DrawerHeader(userViewModel: UserViewModel, drawerState: DrawerState, scope: 
                 TextButton(onClick = {
                     scope.launch {
                         drawerState.close()
-                        navController.navigate("register")
+                        navigateTo(RegisterDestination.route)
                     } }) {
                     Text(text = "Register", fontSize = 22.sp)
                 }

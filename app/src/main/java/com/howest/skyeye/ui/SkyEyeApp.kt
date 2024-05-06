@@ -69,7 +69,7 @@ fun SkyEyeNavHost(
             Drawer(navigateTo = { navController.navigate(it) }, userViewModel = userViewModel)
         }
         composable(route = LoginDestination.route) {
-            LoginAndRegisterScreenU(isRegister = false, navigateTo = { navController.navigate(it) }, userViewModel = userViewModel)
+            LoginAndRegisterScreen(isRegister = false, navigateTo = { navController.navigate(it) }, userViewModel = userViewModel)
         }
         composable(route = RegisterDestination.route) {
             LoginAndRegisterScreen(isRegister = true, navigateTo = { navController.navigate(it) }, userViewModel = userViewModel)
@@ -91,7 +91,7 @@ fun SkyEyeNavHost(
                 SettingsScreen(userViewModel = userViewModel, navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
             }
             composable(route = AccountDestination.route) {
-                AccountSettingsScreen(userViewModel = userViewModel, navigateBack = { navController.navigateUp() })
+                AccountSettingsScreen(userViewModel = userViewModel, navigateBack = { navController.navigateUp() }, navigateTo = { navController.navigate(it) })
             }
             composable(route = AppearanceDestination.route) {
                 AppearanceSettingsScreen(navigateBack = { navController.navigateUp() })

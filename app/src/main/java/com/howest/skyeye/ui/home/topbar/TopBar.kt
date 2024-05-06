@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.user.UserViewModel
 import com.howest.skyeye.ui.settings.account.AccountDestination
+import com.howest.skyeye.ui.user.LoginDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -40,5 +41,6 @@ fun TopBar(userViewModel: UserViewModel, navigateTo: (route: String) -> Unit, dr
                 if (userUiState.isLoggedIn) navigateTo(AccountDestination.route)
                 else navigateTo(LoginDestination.route)
             }) {
+        }
     }
 }

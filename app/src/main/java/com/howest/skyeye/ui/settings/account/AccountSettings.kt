@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.howest.skyeye.ui.NavigationDestination
+import com.howest.skyeye.ui.home.HomeDestination
 import com.howest.skyeye.ui.settings.SettingsTopBar
 import com.howest.skyeye.ui.user.UserUiState
 import com.howest.skyeye.ui.user.UserViewModel
@@ -45,7 +46,7 @@ object AccountDestination : NavigationDestination {
 }
 
 @Composable
-fun AccountSettingsScreen(userViewModel: UserViewModel, navigateBack: () -> Unit) {
+fun AccountSettingsScreen(userViewModel: UserViewModel, navigateBack: () -> Unit, navigateTo: (route: String) -> Unit) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
 
 
@@ -59,13 +60,13 @@ fun AccountSettingsScreen(userViewModel: UserViewModel, navigateBack: () -> Unit
                 .fillMaxSize()
         ) {
             SettingsTopBar(navigateBack, "Account settings")
-            AccountPage(userViewModel)
+            AccountPage(userViewModel, navigateTo)
         }
     }
 }
 
 @Composable
-fun AccountPage(userViewModel: UserViewModel,) {
+fun AccountPage(userViewModel: UserViewModel, navigateTo: (route: String) -> Unit) {
     val focusManager = LocalFocusManager.current
     val userUiState by userViewModel.userUiState.collectAsState()
 
@@ -76,7 +77,7 @@ fun AccountPage(userViewModel: UserViewModel,) {
     ) {
         ProfilePictureSection()
         AccountDetails(userUiState, focusManager)
-        LogoutButton(userViewModel, navController)
+        LogoutButton(userViewModel, navigateTo)
     }
 }
 
@@ -144,11 +145,11 @@ fun AccountTextField(label: String, value: String, focusManager: FocusManager) {
 }
 
 @Composable
-fun LogoutButton(userViewModel: UserViewModel, navController: NavController) {
+fun LogoutButton(userViewModel: UserViewModel, navigateTo: (route: String) -> Unit) {
     TextButton(
         onClick = {
                     userViewModel.logout()
-                    navController.navigate("home")
+                    navigateTo(HomeDestination.route)
                   },
         modifier = Modifier
             .padding(top = 250.dp)

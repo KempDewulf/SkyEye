@@ -193,7 +193,7 @@ fun LoginAndRegisterScreen(isRegister: Boolean, navigateTo: (route: String) -> U
                             } else {
                                 userViewModel.login(email, password)
                             }
-                            navController.navigate("home")
+                            navigateTo(HomeDestination.route)
                         }
                     },
                     shape = RoundedCornerShape(5.dp),
