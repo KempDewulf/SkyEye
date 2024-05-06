@@ -41,6 +41,7 @@ fun TopBar(userViewModel: UserViewModel, navigateTo: (route: String) -> Unit, dr
                 if (userUiState.isLoggedIn) navigateTo(AccountDestination.route)
                 else navigateTo(LoginDestination.route)
             }) {
+            Icon(Icons.Rounded.AccountCircle, contentDescription = "avatar", modifier = Modifier.size(36.dp))
         }
     }
 }

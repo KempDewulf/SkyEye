@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.howest.skyeye.ui.home.HomeScreen
+import com.howest.skyeye.ui.settings.account.AccountDestination
 import com.howest.skyeye.ui.user.UserViewModel
 import com.howest.skyeye.ui.user.LoginDestination
 import com.howest.skyeye.ui.user.RegisterDestination
@@ -103,7 +104,7 @@ fun DrawerHeader(userViewModel: UserViewModel, drawerState: DrawerState, scope: 
             TextButton(onClick = {
                 scope.launch {
                     drawerState.close()
-                    navigateTo(RegisterDestination.route)
+                    navigateTo(AccountDestination.route)
                 } }) {
                 Text(text = "Account", fontSize = 22.sp)
             }
