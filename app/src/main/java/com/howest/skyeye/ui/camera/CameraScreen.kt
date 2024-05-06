@@ -54,10 +54,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
-import com.howest.skyeye.ui.home.HomeScreen
+import howest.nma.skyeye.R
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import howest.nma.skyeye.R
 
 @Composable
 fun CameraScreen(navController: NavController) {

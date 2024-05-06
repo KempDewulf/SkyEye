@@ -36,14 +36,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.howest.skyeye.ui.AppViewModelProvider
-import com.howest.skyeye.ui.core.MainViewModel
+import com.howest.skyeye.ui.theme.ThemeViewModel
 import howest.nma.skyeye.R
 
 
 @Composable
-fun ForgotPasswordScreen(navController: NavController, viewModel: MainViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun ForgotPasswordScreen(navController: NavController, viewModel: ThemeViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val greeting = "Forgot your password?"
-    val mainUiState by viewModel.mainUiState.collectAsState()
+    val mainUiState by viewModel.themeUiState.collectAsState()
     val isDarkMode = mainUiState.isDarkMode
 
     Surface(

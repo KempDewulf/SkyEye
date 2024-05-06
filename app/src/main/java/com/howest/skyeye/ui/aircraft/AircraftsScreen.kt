@@ -37,6 +37,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.howest.skyeye.ui.AircraftData
+import com.howest.skyeye.ui.ManufacturerAndAircraft
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -147,12 +149,6 @@ fun AircraftList(navController: NavController, expandedAircrafts: Set<String>, s
         }
     }
 }
-
-data class AircraftData(val name: String)
-data class ManufacturerAndAircraft(
-    val manufacturer: String,
-    val aircraft: List<AircraftData>
-)
 
 @Composable
 fun AircraftTypeItem(manufacturer: String, aircraftType: String, onClick: () -> Unit, isExpanded: Boolean) {
