@@ -17,6 +17,7 @@ import com.howest.skyeye.ui.home.bottombar.BottomBar
 import com.howest.skyeye.ui.home.modals.maptype.MapTypeViewModel
 import com.howest.skyeye.ui.home.topbar.TopBar
 import com.howest.skyeye.ui.map.MapView
+import com.howest.skyeye.ui.user.UserViewModel
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import kotlinx.coroutines.CoroutineScope
 
@@ -26,13 +27,13 @@ object HomeDestination : NavigationDestination {
 }
 
 @Composable
-fun HomeScreen(viewModel: MapTypeViewModel = viewModel(factory = AppViewModelProvider.Factory), drawerState: DrawerState, scope: CoroutineScope, navigateTo: (route: String) -> Unit) {
+fun HomeScreen(userViewModel: UserViewModel, viewModel: MapTypeViewModel = viewModel(factory = AppViewModelProvider.Factory), drawerState: DrawerState, scope: CoroutineScope, navigateTo: (route: String) -> Unit) {
     val uiState by viewModel.mapTypeUiState.collectAsState()
     val cameraPositionState = remember { mutableStateOf<CameraPosition?>(null) }
 
     Scaffold(
         topBar = {
-            TopBar(navigateTo, drawerState, scope)
+            TopBar(userViewModel = userViewModel, navigatoTo = navigateTo, drawerState = drawerState, scope = scope)
         },
         bottomBar = {
             BottomBar(navigateTo)

@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -34,6 +35,7 @@ import com.howest.skyeye.ui.settings.appearance.AppearanceDestination
 import com.howest.skyeye.ui.settings.appearance.AppearanceSettingsScreen
 import com.howest.skyeye.ui.settings.support.SupportDestination
 import com.howest.skyeye.ui.settings.support.SupportSettingsScreen
+import com.howest.skyeye.ui.user.UserViewModel
 import com.howest.skyeye.ui.user.ForgotPasswordDestination
 import com.howest.skyeye.ui.user.ForgotPasswordScreen
 import com.howest.skyeye.ui.user.LoginAndRegisterScreen
@@ -57,18 +59,20 @@ fun SkyEyeNavHost(
     navController: NavHostController,
     context: Context
 ) {
+    val userViewModel : UserViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
     NavHost(
         navController = navController,
         startDestination = HomeDestination.route,
     ) {
         composable(route = HomeDestination.route) {
-            Drawer(navigateTo = { navController.navigate(it) })
+            Drawer(navigateTo = { navController.navigate(it) }, userViewModel = userViewModel)
         }
         composable(route = LoginDestination.route) {
-            LoginAndRegisterScreen(false, navigateTo = { navController.navigate(it) })
+            LoginAndRegisterScreenU(isRegister = false, navigateTo = { navController.navigate(it) }, userViewModel = userViewModel)
         }
         composable(route = RegisterDestination.route) {
-            LoginAndRegisterScreen(true, navigateTo = { navController.navigate(it) })
+            LoginAndRegisterScreen(isRegister = true, navigateTo = { navController.navigate(it) }, userViewModel = userViewModel)
         }
         composable(route = ForgotPasswordDestination.route) {
             ForgotPasswordScreen(navigateTo = { navController.navigate(it) })
@@ -84,10 +88,10 @@ fun SkyEyeNavHost(
         }
         navigation(startDestination = "main", route = SettingsDestination.route) {
             composable("main") {
-                SettingsScreen(navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
+                SettingsScreen(userViewModel = userViewModel, navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
             }
             composable(route = AccountDestination.route) {
-                AccountSettingsScreen(navigateBack = { navController.navigateUp() })
+                AccountSettingsScreen(userViewModel = userViewModel, navigateBack = { navController.navigateUp() })
             }
             composable(route = AppearanceDestination.route) {
                 AppearanceSettingsScreen(navigateBack = { navController.navigateUp() })

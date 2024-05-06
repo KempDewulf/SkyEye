@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.settings.SettingsTopBar
+import com.howest.skyeye.ui.user.UserUiState
+import com.howest.skyeye.ui.user.UserViewModel
 
 object AccountDestination : NavigationDestination {
     override val route: String = "account"
@@ -42,8 +45,9 @@ object AccountDestination : NavigationDestination {
 }
 
 @Composable
-fun AccountSettingsScreen(navigateBack: () -> Unit) {
+fun AccountSettingsScreen(userViewModel: UserViewModel, navigateBack: () -> Unit) {
     var isBackgroundLoaded by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(Unit) {
         isBackgroundLoaded = true
@@ -55,14 +59,15 @@ fun AccountSettingsScreen(navigateBack: () -> Unit) {
                 .fillMaxSize()
         ) {
             SettingsTopBar(navigateBack, "Account settings")
-            AccountPage()
+            AccountPage(userViewModel)
         }
     }
 }
 
 @Composable
-fun AccountPage() {
+fun AccountPage(userViewModel: UserViewModel,) {
     val focusManager = LocalFocusManager.current
+    val userUiState by userViewModel.userUiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -70,8 +75,8 @@ fun AccountPage() {
             .padding(vertical = 50.dp, horizontal = 50.dp),
     ) {
         ProfilePictureSection()
-        AccountDetails(focusManager)
-        LogoutButton()
+        AccountDetails(userUiState, focusManager)
+        LogoutButton(userViewModel, navController)
     }
 }
 
@@ -115,16 +120,11 @@ fun ProfilePictureSection() {
 }
 
 @Composable
-fun AccountDetails(focusManager: FocusManager) {
-    AccountTextField(
-        label = "Full Name",
-        value = "John Doe",
-        focusManager = focusManager
-    )
+fun AccountDetails(userUiState: UserUiState, focusManager: FocusManager) {
     AccountTextField(
         label = "Email",
-        value = "John.Doe@gmail.com",
-        focusManager = focusManager
+        value = userUiState.email,
+        focusManager = focusManager,
     )
 }
 
@@ -137,18 +137,21 @@ fun AccountTextField(label: String, value: String, focusManager: FocusManager) {
         shape = MaterialTheme.shapes.extraLarge,
         onValueChange = {},
         modifier = Modifier
-            .padding(bottom = 20.dp)
+            .padding(bottom = 20.dp, top = 40.dp)
             .fillMaxWidth()
             .onFocusChanged { if (it.isFocused) focusManager.clearFocus() }
     )
 }
 
 @Composable
-fun LogoutButton() {
+fun LogoutButton(userViewModel: UserViewModel, navController: NavController) {
     TextButton(
-        onClick = { /*TODO*/ },
+        onClick = {
+                    userViewModel.logout()
+                    navController.navigate("home")
+                  },
         modifier = Modifier
-            .padding(top = 150.dp)
+            .padding(top = 250.dp)
             .fillMaxWidth()
             .wrapContentWidth(Alignment.CenterHorizontally)
             .border(2.dp, MaterialTheme.colorScheme.onError, MaterialTheme.shapes.extraLarge)

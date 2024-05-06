@@ -26,6 +26,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.howest.skyeye.ui.home.HomeScreen
+import com.howest.skyeye.ui.user.UserViewModel
 import com.howest.skyeye.ui.user.LoginDestination
 import com.howest.skyeye.ui.user.RegisterDestination
 import howest.nma.skyeye.R
@@ -43,7 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun Drawer(navigateTo: (route: String) -> Unit) {
+fun Drawer(userViewModel: UserViewModel, navigateTo: (route: String) -> Unit) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val items = listOf(
@@ -57,27 +60,29 @@ fun Drawer(navigateTo: (route: String) -> Unit) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = false,
-        drawerContent = { DrawerContent(drawerState, scope, items, navigateTo) },
+        drawerContent = { DrawerContent(userViewModel = userViewModel, drawerState = drawerState, scope = scope, items = items, navigateTo = navigateTo) },
         scrimColor = Color.Black.copy(alpha = 0.8f),
-        content = { HomeScreen(drawerState = drawerState, scope = scope, navigateTo = navigateTo) }
+        content = { HomeScreen(userViewModel = userViewModel, drawerState = drawerState, scope = scope, navigateTo = navigateTo) }
     )
 }
 
 @Composable
-fun DrawerContent(drawerState: DrawerState, scope: CoroutineScope, items: List<Triple<Int, String, String>>, navigateTo: (route: String) -> Unit) {
+fun DrawerContent(userViewModel: UserViewModel, drawerState: DrawerState, scope: CoroutineScope, items: List<Triple<Int, String, String>>, navigateTo: (route: String) -> Unit) {
     ModalDrawerSheet(
         drawerShape = RectangleShape,
         modifier = Modifier
             .fillMaxHeight()
             .width(300.dp)
     ) {
-        DrawerHeader(drawerState, scope, navigateTo)
-        DrawerItems(items, drawerState, scope, navigateTo)
+        DrawerHeader(userViewModel = userViewModel, drawerState = drawerState, scope = scope, navigateTo = navigateTo)
+        DrawerItems(items = items, drawerState = drawerState, scope = scope, navigateTo = navigateTo)
     }
 }
 
 @Composable
-fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navigateTo: (route: String) -> Unit) {
+fun DrawerHeader(userViewModel: UserViewModel, drawerState: DrawerState, scope: CoroutineScope, navigateTo: (route: String) -> Unit) {
+    val userUiState by userViewModel.userUiState.collectAsState()
+
     Spacer(Modifier.height(12.dp))
     Row(
         modifier = Modifier
@@ -94,23 +99,33 @@ fun DrawerHeader(drawerState: DrawerState, scope: CoroutineScope, navigateTo: (r
             )
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        if (userUiState.isLoggedIn) {
             TextButton(onClick = {
                 scope.launch {
                     drawerState.close()
                     navigateTo(RegisterDestination.route)
                 } }) {
-                Text(text = "Register", fontSize = 22.sp)
+                Text(text = "Account", fontSize = 22.sp)
             }
-            Text(text = "or", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 22.sp)
-            TextButton(onClick = {
-                scope.launch {
-                    drawerState.close()
-                    navigateTo(LoginDestination.route)
-                } }) {
-                Text(text = "Log in", fontSize = 22.sp)
+        } else {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(onClick = {
+                    scope.launch {
+                        drawerState.close()
+                        navController.navigate("register")
+                    } }) {
+                    Text(text = "Register", fontSize = 22.sp)
+                }
+                Text(text = "or", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 22.sp)
+                TextButton(onClick = {
+                    scope.launch {
+                        drawerState.close()
+                        navigateTo(LoginDestination.route)
+                    } }) {
+                    Text(text = "Log in", fontSize = 22.sp)
+                }
             }
         }
     }

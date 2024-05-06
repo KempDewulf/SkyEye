@@ -12,14 +12,20 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.howest.skyeye.ui.user.UserViewModel
 import com.howest.skyeye.ui.settings.account.AccountDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun TopBar(navigateTo: (route: String) -> Unit, drawerState: DrawerState, scope: CoroutineScope) {
+fun TopBar(userViewModel: UserViewModel, navigateTo: (route: String) -> Unit, drawerState: DrawerState, scope: CoroutineScope) {
+    val userUiState by userViewModel.userUiState.collectAsState()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -29,8 +35,10 @@ fun TopBar(navigateTo: (route: String) -> Unit, drawerState: DrawerState, scope:
         IconButton(onClick = { scope.launch { drawerState.open() } }) {
             Icon(Icons.Rounded.Menu, contentDescription = "menu", modifier = Modifier.size(32.dp))
         }
-        IconButton(onClick = { navigateTo(AccountDestination.route) }) {
-            Icon(Icons.Rounded.AccountCircle, contentDescription = "avatar", modifier = Modifier.size(36.dp))
-        }
+        IconButton(
+            onClick = {
+                if (userUiState.isLoggedIn) navigateTo(AccountDestination.route)
+                else navigateTo(LoginDestination.route)
+            }) {
     }
 }

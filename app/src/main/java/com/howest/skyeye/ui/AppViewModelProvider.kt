@@ -9,12 +9,16 @@ import com.howest.skyeye.SkyEyeApplication
 import com.howest.skyeye.ui.home.modals.filter.FilterViewModel
 import com.howest.skyeye.ui.home.modals.maptype.MapTypeViewModel
 import com.howest.skyeye.ui.home.modals.weather.WeatherViewModel
+import com.howest.skyeye.ui.user.UserViewModel
 import com.howest.skyeye.ui.theme.ThemeViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             ThemeViewModel(SkyEyeApplication().container.userPreferencesRepositoryInterface)
+        }
+        initializer {
+            UserViewModel(SkyEyeApplication().container.userRepositoryInterface)
         }
         initializer {
             WeatherViewModel()

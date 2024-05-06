@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -103,10 +105,15 @@ fun ForgotPasswordScreen(navigateTo: (route: String) -> Unit, viewModel: ThemeVi
                 modifier = Modifier.fillMaxWidth(0.75f)
             ) {
                 var email by remember { mutableStateOf("") }
+                fun isValidEmail(email: String): Boolean {
+                    val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})".toRegex()
+                    return emailRegex.matches(email)
+                }
 
                 TextField(
                     value = email,
                     onValueChange = { email = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     label = { Text("Email") },
                     modifier = Modifier
                         .padding(bottom = 5.dp)
@@ -116,6 +123,7 @@ fun ForgotPasswordScreen(navigateTo: (route: String) -> Unit, viewModel: ThemeVi
                 Button(
                     onClick = { /*TODO*/ },
                     shape = RoundedCornerShape(5.dp),
+                    enabled = isValidEmail(email),
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {

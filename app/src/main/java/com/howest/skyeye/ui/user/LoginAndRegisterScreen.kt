@@ -1,6 +1,5 @@
 package com.howest.skyeye.ui.user
 
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,7 @@ import com.howest.skyeye.ui.NavigationDestination
 import com.howest.skyeye.ui.home.HomeDestination
 import com.howest.skyeye.ui.theme.ThemeViewModel
 import howest.nma.skyeye.R
+import kotlinx.coroutines.launch
 
 object LoginDestination : NavigationDestination {
     override val route: String = "login"
@@ -62,15 +64,23 @@ object RegisterDestination : NavigationDestination {
 }
 
 @Composable
-fun LoginAndRegisterScreen(isRegister: Boolean, navigateTo: (route: String) -> Unit, viewModel: ThemeViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun LoginAndRegisterScreen(isRegister: Boolean, navigateTo: (route: String) -> Unit, userViewModel: UserViewModel, themeViewModel: ThemeViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     var greeting = "Log in to your SkyEye account"
     var actionWord = "Log in"
     if (isRegister) {
         greeting = "Create one SkyEye account for all your devices"
         actionWord = "Sign up"
     }
-    val mainUiState by viewModel.themeUiState.collectAsState()
-    val isDarkMode = mainUiState.isDarkMode
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    val themeUiState by themeViewModel.themeUiState.collectAsState()
+    val isDarkMode = themeUiState.isDarkMode
+
+    fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})".toRegex()
+        return emailRegex.matches(email)
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -128,13 +138,11 @@ fun LoginAndRegisterScreen(isRegister: Boolean, navigateTo: (route: String) -> U
             Column(
                 modifier = Modifier.fillMaxWidth(0.75f)
             ) {
-                var email by remember { mutableStateOf("") }
-                var password by remember { mutableStateOf("") }
                 var passwordVisibility by remember { mutableStateOf(false) }
-
                 TextField(
                     value = email,
                     onValueChange = { email = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     label = { Text("Email") },
                     modifier = Modifier
                         .padding(bottom = 5.dp)
@@ -143,7 +151,7 @@ fun LoginAndRegisterScreen(isRegister: Boolean, navigateTo: (route: String) -> U
                 TextField(
                     value = password,
                     onValueChange = { password = it },
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     label = { Text("Password") },
                     trailingIcon = {
@@ -178,8 +186,18 @@ fun LoginAndRegisterScreen(isRegister: Boolean, navigateTo: (route: String) -> U
                     Spacer(modifier = Modifier.height(20.dp))
                 }
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        coroutineScope.launch {
+                            if (isRegister) {
+                                userViewModel.register(email, password)
+                            } else {
+                                userViewModel.login(email, password)
+                            }
+                            navController.navigate("home")
+                        }
+                    },
                     shape = RoundedCornerShape(5.dp),
+                    enabled = isValidEmail(email) && password.isNotEmpty(),
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
