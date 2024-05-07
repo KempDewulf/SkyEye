@@ -19,7 +19,7 @@ class UserViewModel(private val usersRepository: UsersRepositoryInterface) : Vie
     }
 
     suspend fun login(email: String, password: String) {
-        _uiState.value = UserUiState(isLoading = true)
+        _uiState.value = UserUiState(isLoading = true, error = "")
         val hashedPassword = hashPassword(password)
         viewModelScope.launch {
             try {
@@ -28,18 +28,20 @@ class UserViewModel(private val usersRepository: UsersRepositoryInterface) : Vie
             } catch (e: Exception) {
                 _uiState.value = UserUiState(error = "Login failed: ${e.message}", isLoading = false)
             }
+            println("login: ${_uiState.value}")
         }
     }
 
     suspend fun register(email: String, password: String) {
-        _uiState.value = UserUiState(isLoading = true)
+        _uiState.value = UserUiState(isLoading = true, error = "")
         val hashedPassword = hashPassword(password)
         viewModelScope.launch {
-            try {
-                usersRepository.addUser(User(email = email, password = hashedPassword))
+            val userId = usersRepository.addUser(User(email = email, password = hashedPassword))
+            if (userId == -1L) {
+                // If the addUser method returned -1, show an error message
+                _uiState.value = UserUiState(error = "Registration failed: User with this email already exists", isLoading = false)
+            } else {
                 _uiState.value = UserUiState(email = email, password = password, isLoggedIn = true, isLoading = false)
-            } catch (e: Exception) {
-                _uiState.value = UserUiState(error = "Registration failed: ${e.message}", isLoading = false)
             }
         }
     }
@@ -48,7 +50,7 @@ class UserViewModel(private val usersRepository: UsersRepositoryInterface) : Vie
         _uiState.value = UserUiState()
     }
 
-    private fun hashPassword(password: String): String {
+    fun hashPassword(password: String): String {
         val bytes = password.toByteArray()
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(bytes)

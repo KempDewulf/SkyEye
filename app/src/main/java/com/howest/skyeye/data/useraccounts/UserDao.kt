@@ -8,11 +8,11 @@ import androidx.room.Query
 @Dao
 interface UserDao {
     //for single user insert
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertUser(user: User): Long
 
     //for list of users insert
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertUserAll(users: List<User>): List<Long>
 
     //checking user exist or not in our db
