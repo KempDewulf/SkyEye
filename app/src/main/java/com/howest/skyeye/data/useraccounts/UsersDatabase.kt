@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 @Database(entities = [User::class], version = 3)
 abstract class UsersDatabase : RoomDatabase() {
 
-    abstract fun userAccountsDao(): UserDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile

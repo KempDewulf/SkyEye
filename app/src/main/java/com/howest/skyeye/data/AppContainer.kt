@@ -18,6 +18,6 @@ class AppDataContainer(private val context: Context) : AppContainer {
         UserPreferencesRepository(UserPreferencesDatabase.getDatabase(context).userPreferencesDao())
     }
     override val usersRepositoryInterface: UsersRepositoryInterface by lazy {
-        UsersRepository(UsersDatabase.getDatabase(context).userAccountsDao())
+        UsersRepository(UsersDatabase.getDatabase(context).userDao())
     }
 }
