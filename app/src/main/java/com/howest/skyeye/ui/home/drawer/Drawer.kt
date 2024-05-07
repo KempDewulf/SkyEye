@@ -33,11 +33,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.howest.skyeye.ui.aircraft.SeeAllAircraftTypesDestination
+import com.howest.skyeye.ui.airport.SeeAllAirportsDestination
+import com.howest.skyeye.ui.camera.CameraDestination
 import com.howest.skyeye.ui.home.HomeScreen
+import com.howest.skyeye.ui.settings.SettingsDestination
 import com.howest.skyeye.ui.settings.account.AccountDestination
 import com.howest.skyeye.ui.user.UserViewModel
 import com.howest.skyeye.ui.user.LoginDestination
@@ -51,11 +56,11 @@ fun Drawer(userViewModel: UserViewModel, navigateTo: (route: String) -> Unit) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val items = listOf(
-        Triple(R.drawable.weather, "Check the weather", "weather"),
-        Triple(R.drawable.camera, "Search airplanes with AR", "camera"),
-        Triple(R.drawable.airplane, "See all aircraft types", "seeAllAircraftTypes"),
-        Triple(R.drawable.runway, "See all airports", "seeAllAirports"),
-        Triple(R.drawable.settings, "Settings", "settings")
+        //Triple(R.drawable.weather, "Check the weather", "weather"),
+        Triple(R.drawable.camera, "Search airplanes with AR", CameraDestination.route),
+        Triple(R.drawable.airplane, "See all aircraft types", SeeAllAircraftTypesDestination.route),
+        Triple(R.drawable.runway, "See all airports", SeeAllAirportsDestination.route),
+        Triple(R.drawable.settings, "Settings", SettingsDestination.route)
     )
 
     ModalNavigationDrawer(
@@ -94,7 +99,7 @@ fun DrawerHeader(userViewModel: UserViewModel, drawerState: DrawerState, scope: 
         IconButton(onClick = { scope.launch { drawerState.close() } }) {
             Icon(
                 Icons.AutoMirrored.Rounded.ArrowBack,
-                contentDescription = null,
+                contentDescription = "Back",
                 modifier = Modifier
                     .size(30.dp)
             )
@@ -152,7 +157,7 @@ fun DrawerItem(
             Icon(
                 painterResource(iconId),
                 tint = MaterialTheme.colorScheme.primary,
-                contentDescription = null,
+                contentDescription = label,
                 modifier = Modifier.size(26.dp)
             )
         },
