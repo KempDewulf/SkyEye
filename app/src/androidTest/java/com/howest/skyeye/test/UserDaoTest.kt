@@ -21,8 +21,6 @@ class UserDaoTest {
 
     private lateinit var userDao: UserDao
     private lateinit var usersDatabase: UsersDatabase
-    private val user1 = User(1, "john.doe@test.com", "pwd123")
-    private val user2 = User(2, "mary.jane@test.com", "pwd456")
 
     @Before
     fun createDb() {
