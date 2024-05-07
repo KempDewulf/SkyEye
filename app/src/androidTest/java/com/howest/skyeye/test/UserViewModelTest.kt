@@ -1,14 +1,13 @@
 package com.howest.skyeye.test
 
-import androidx.lifecycle.viewModelScope
 import androidx.test.core.app.ApplicationProvider
 import com.howest.skyeye.SkyEyeApplication
 import com.howest.skyeye.data.AppDataContainer
 import com.howest.skyeye.data.useraccounts.User
 import com.howest.skyeye.ui.user.UserUiState
 import com.howest.skyeye.ui.user.UserViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -17,14 +16,14 @@ import org.junit.Test
 class UserViewModelTest {
     private lateinit var userViewModel: UserViewModel
     private lateinit var application: SkyEyeApplication
-    private lateinit var coroutineScope: CoroutineScope
+    private lateinit var testScope: TestScope
 
     @Before
     fun setup() {
         application = ApplicationProvider.getApplicationContext()
         application.container = AppDataContainer(application)
         userViewModel = UserViewModel(application.container.usersRepositoryInterface)
-        coroutineScope = userViewModel.viewModelScope
+        testScope = TestScope()
     }
 
     @Test
@@ -34,7 +33,7 @@ class UserViewModelTest {
         val hashedPassword = userViewModel.hashPassword(password)
         val user = User(email = email, password = hashedPassword)
 
-        coroutineScope.launch {
+        testScope.launch {
             application.container.usersRepositoryInterface.addUser(user)
             userViewModel.login(email, password)
 
@@ -50,7 +49,7 @@ class UserViewModelTest {
         val password = "password"
         val hashedPassword = userViewModel.hashPassword(password)
 
-        coroutineScope.launch {
+        testScope.launch {
             userViewModel.register(email, password)
 
 
@@ -66,7 +65,7 @@ class UserViewModelTest {
         val hashedPassword = userViewModel.hashPassword(password)
         val user = User(email = email, password = hashedPassword)
 
-        coroutineScope.launch {
+        testScope.launch {
             // Add the user first to simulate an existing account
             application.container.usersRepositoryInterface.addUser(user)
             // Try to register again with the same email and password
@@ -83,7 +82,7 @@ class UserViewModelTest {
         val email = "nonexisting@test.com"
         val password = "password"
 
-        coroutineScope.launch {
+        testScope.launch {
             // Try to login with a non-existing account
             userViewModel.login(email, password)
 
@@ -102,7 +101,7 @@ class UserViewModelTest {
         val hashedPassword = userViewModel.hashPassword(password)
         val user = User(email = email, password = hashedPassword)
 
-        coroutineScope.launch {
+        testScope.launch {
             // Add the user first
             application.container.usersRepositoryInterface.addUser(user)
             // Try to login with a wrong password

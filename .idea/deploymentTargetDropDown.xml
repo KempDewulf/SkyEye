@@ -2,22 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="SkyEyeScreenNavigationTest">
+      <entry key="UserViewModelTest">
         <State />
       </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="skyEyeNavHost_clickBackArrowInCameraScreen_opensHomeScreen()">
-        <State />
-      </entry>
-      <entry key="skyEyeNavHost_clickBackArrowInDrawer_closesDrawer()">
-        <State />
-      </entry>
-      <entry key="skyEyeNavHost_clickCloseButtonInCameraScreen_opensHomeScreen()">
-        <State />
-      </entry>
-      <entry key="skyEyeNavHost_clickCloseButtonInLoginScreen_opensHomeScreen()">
         <State />
       </entry>
     </value>
