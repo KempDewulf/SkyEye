@@ -8,6 +8,12 @@
       <entry key="SkyEyeScreenNavigationTest">
         <State />
       </entry>
+      <entry key="UserDaoTest">
+        <State />
+      </entry>
+      <entry key="UserPreferencesDaoTest">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>

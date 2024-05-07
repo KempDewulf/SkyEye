@@ -10,6 +10,7 @@ import com.howest.skyeye.data.useraccounts.UsersDatabase
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -67,5 +68,19 @@ class UserDaoTest {
         userDao.deleteAll()
         val byEmail = userDao.readLoginData("test@test.com", "password")
         assertEquals(byEmail, null)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun insertUserWithSameEmail() = runBlocking {
+        val user1 = User(1, "test@test.com", "password")
+        val user2 = User(2, "test@test.com", "password2")
+        userDao.insertUser(user1)
+        try {
+            userDao.insertUser(user2)
+            fail("Should have thrown an exception because email is not unique")
+        } catch (e: Exception) {
+            assert(e.message != null)
+        }
     }
 }
