@@ -3,6 +3,7 @@ package com.howest.skyeye.test
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.howest.skyeye.data.userpreferences.UserPreferences
 import com.howest.skyeye.data.userpreferences.UserPreferencesDao
 import com.howest.skyeye.data.userpreferences.UserPreferencesDatabase
@@ -12,8 +13,10 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import java.io.IOException
 
+@RunWith(AndroidJUnit4::class)
 class UserPreferencesDaoTest {
 
     private lateinit var userPreferencesDao: UserPreferencesDao
@@ -21,8 +24,10 @@ class UserPreferencesDaoTest {
 
     @Before
     fun createDb() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        userPreferencesDatabase = Room.inMemoryDatabaseBuilder(context, UserPreferencesDatabase::class.java).build()
+        val context : Context = ApplicationProvider.getApplicationContext()
+        userPreferencesDatabase = Room.inMemoryDatabaseBuilder(context, UserPreferencesDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
         userPreferencesDao = userPreferencesDatabase.userPreferencesDao()
     }
 

@@ -9,7 +9,6 @@ import com.howest.skyeye.data.useraccounts.UserDao
 import com.howest.skyeye.data.useraccounts.UsersDatabase
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
