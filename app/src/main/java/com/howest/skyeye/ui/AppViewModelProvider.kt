@@ -18,7 +18,7 @@ object AppViewModelProvider {
             ThemeViewModel(SkyEyeApplication().container.userPreferencesRepositoryInterface)
         }
         initializer {
-            UserViewModel(SkyEyeApplication().container.userRepositoryInterface)
+            UserViewModel(SkyEyeApplication().container.usersRepositoryInterface)
         }
         initializer {
             WeatherViewModel()

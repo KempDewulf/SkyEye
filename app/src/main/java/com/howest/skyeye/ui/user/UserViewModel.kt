@@ -2,15 +2,15 @@ package com.howest.skyeye.ui.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.howest.skyeye.data.useraccounts.UserRepositoryInterface
-import com.howest.skyeye.data.useraccounts.Users
+import com.howest.skyeye.data.useraccounts.User
+import com.howest.skyeye.data.useraccounts.UsersRepositoryInterface
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
-class UserViewModel(private val userRepository: UserRepositoryInterface) : ViewModel() {
+class UserViewModel(private val usersRepository: UsersRepositoryInterface) : ViewModel() {
     private val _uiState = MutableStateFlow(UserUiState())
     val userUiState: StateFlow<UserUiState> = _uiState.asStateFlow()
 
@@ -23,7 +23,7 @@ class UserViewModel(private val userRepository: UserRepositoryInterface) : ViewM
         val hashedPassword = hashPassword(password)
         viewModelScope.launch {
             try {
-                val user = userRepository.verifyLoginUser(email, hashedPassword)
+                val user = usersRepository.verifyLoginUser(email, hashedPassword)
                 _uiState.value = UserUiState(email = user.email, password = user.password, isLoggedIn = true, isLoading = false)
             } catch (e: Exception) {
                 _uiState.value = UserUiState(error = "Login failed: ${e.message}", isLoading = false)
@@ -36,7 +36,7 @@ class UserViewModel(private val userRepository: UserRepositoryInterface) : ViewM
         val hashedPassword = hashPassword(password)
         viewModelScope.launch {
             try {
-                userRepository.addUser(Users(email = email, password = hashedPassword))
+                usersRepository.addUser(User(email = email, password = hashedPassword))
                 _uiState.value = UserUiState(email = email, password = password, isLoggedIn = true, isLoading = false)
             } catch (e: Exception) {
                 _uiState.value = UserUiState(error = "Registration failed: ${e.message}", isLoading = false)
