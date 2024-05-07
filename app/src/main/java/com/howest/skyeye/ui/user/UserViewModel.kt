@@ -48,7 +48,7 @@ class UserViewModel(private val usersRepository: UsersRepositoryInterface) : Vie
         _uiState.value = UserUiState()
     }
 
-    private fun hashPassword(password: String): String {
+    fun hashPassword(password: String): String {
         val bytes = password.toByteArray()
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(bytes)
