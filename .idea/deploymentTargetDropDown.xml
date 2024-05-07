@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="All Tests">
+        <State />
+      </entry>
       <entry key="SkyEyeScreenNavigationTest">
         <State />
       </entry>
@@ -9,9 +12,6 @@
         <State />
       </entry>
       <entry key="skyEyeNavHost_clickBackArrowInCameraScreen_opensHomeScreen()">
-        <State />
-      </entry>
-      <entry key="skyEyeNavHost_clickBackArrowInDrawer_closesDrawer()">
         <State />
       </entry>
       <entry key="skyEyeNavHost_clickCloseButtonInCameraScreen_opensHomeScreen()">
