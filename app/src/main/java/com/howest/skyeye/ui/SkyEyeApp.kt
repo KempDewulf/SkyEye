@@ -86,22 +86,20 @@ fun SkyEyeNavHost(
         composable(route = SeeAllAirportsDestination.route) {
             AirportsScreen(navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
         }
-        navigation(startDestination = "main", route = SettingsDestination.route) {
-            composable("main") {
-                SettingsScreen(userViewModel = userViewModel, navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
-            }
-            composable(route = AccountDestination.route) {
-                AccountSettingsScreen(userViewModel = userViewModel, navigateBack = { navController.navigateUp() }, navigateTo = { navController.navigate(it) })
-            }
-            composable(route = AppearanceDestination.route) {
-                AppearanceSettingsScreen(navigateBack = { navController.navigateUp() })
-            }
-            composable(route = SupportDestination.route) {
-                SupportSettingsScreen(navigateBack = { navController.navigateUp() })
-            }
-            composable(route = AboutDestination.route) {
-                AboutSettingsScreen(navigateBack = { navController.navigateUp() })
-            }
+        composable(SettingsDestination.route) {
+            SettingsScreen(userViewModel = userViewModel, navigateTo = { navController.navigate(it) }, navigateBack = { navController.navigateUp() })
+        }
+        composable(route = AccountDestination.route) {
+            AccountSettingsScreen(userViewModel = userViewModel, navigateBack = { navController.navigateUp() }, navigateTo = { navController.navigate(it) })
+        }
+        composable(route = AppearanceDestination.route) {
+            AppearanceSettingsScreen(navigateBack = { navController.navigateUp() })
+        }
+        composable(route = SupportDestination.route) {
+            SupportSettingsScreen(navigateBack = { navController.navigateUp() })
+        }
+        composable(route = AboutDestination.route) {
+            AboutSettingsScreen(navigateBack = { navController.navigateUp() })
         }
         composable(
             route = AirportDetailDestination.routeWithArgs,
