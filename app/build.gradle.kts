@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.navigation:navigation-testing:2.7.7")
     val cameraVersion = "1.3.3"
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
