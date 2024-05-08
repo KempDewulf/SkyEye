@@ -7,7 +7,6 @@ plugins {
 android {
     namespace = "howest.nma.skyeye"
     compileSdk = 34
-
     defaultConfig {
         applicationId = "howest.nma.skyeye"
         minSdk = 24
@@ -28,6 +27,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
         }
     }
     compileOptions {
@@ -48,6 +53,14 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    testOptions {
+        animationsDisabled
+
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
 }
 
 dependencies {
