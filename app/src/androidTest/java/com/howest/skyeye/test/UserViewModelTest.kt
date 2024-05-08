@@ -37,8 +37,6 @@ class UserViewModelTest {
             application.container.usersRepositoryInterface.addUser(user)
             userViewModel.login(email, password)
 
-
-
             assertEquals(UserUiState(email = email, password = hashedPassword, isLoggedIn = true, isLoading = false), userViewModel.userUiState.value)
         }
     }
@@ -52,8 +50,6 @@ class UserViewModelTest {
         testScope.launch {
             userViewModel.register(email, password)
 
-
-
             assertEquals(UserUiState(email = email, password = hashedPassword, isLoggedIn = true, isLoading = false), userViewModel.userUiState.value)
         }
     }
@@ -66,13 +62,9 @@ class UserViewModelTest {
         val user = User(email = email, password = hashedPassword)
 
         testScope.launch {
-            // Add the user first to simulate an existing account
             application.container.usersRepositoryInterface.addUser(user)
-            // Try to register again with the same email and password
             userViewModel.register(email, password)
 
-
-            // Check if an error message is set in the UI state
             assertTrue(userViewModel.userUiState.value.error.isNotEmpty())
         }
     }
@@ -83,12 +75,8 @@ class UserViewModelTest {
         val password = "password"
 
         testScope.launch {
-            // Try to login with a non-existing account
             userViewModel.login(email, password)
 
-
-
-            // Check if an error message is set in the UI state
             assertTrue(userViewModel.userUiState.value.error.isNotEmpty())
         }
     }
@@ -102,12 +90,8 @@ class UserViewModelTest {
         val user = User(email = email, password = hashedPassword)
 
         testScope.launch {
-            // Add the user first
             application.container.usersRepositoryInterface.addUser(user)
-            // Try to login with a wrong password
             userViewModel.login(email, wrongPassword)
-
-
 
             assertTrue(userViewModel.userUiState.value.error.isNotEmpty())
         }
