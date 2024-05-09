@@ -1,12 +1,7 @@
 package com.howest.skyeye.test
 
-import androidx.test.core.app.ApplicationProvider
-import com.howest.skyeye.SkyEyeApplication
-import com.howest.skyeye.data.AppDataContainer
 import com.howest.skyeye.ui.home.modals.FilterUiState
 import com.howest.skyeye.ui.home.modals.filter.FilterViewModel
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -14,15 +9,10 @@ import org.junit.Test
 
 class FilterViewModelTest {
     private lateinit var filterViewModel: FilterViewModel
-    private lateinit var application: SkyEyeApplication
-    private lateinit var testScope: TestScope
 
     @Before
     fun setup() {
-        application = ApplicationProvider.getApplicationContext()
-        application.container = AppDataContainer(application)
         filterViewModel = FilterViewModel()
-        testScope = TestScope()
     }
 
 
