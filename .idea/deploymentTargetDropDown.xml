@@ -2,22 +2,13 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="FilterViewModelTest">
+      <entry key="APIViewModelTest">
         <State />
       </entry>
-      <entry key="MapTypeModelTest">
-        <State />
-      </entry>
-      <entry key="ReminderWorkerTest">
+      <entry key="ThemeViewModelTest">
         <State />
       </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="testNotificationSent()">
-        <State />
-      </entry>
-      <entry key="testSetFilterItem()">
         <State />
       </entry>
     </value>
