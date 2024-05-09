@@ -5,10 +5,19 @@
       <entry key="All Tests">
         <State />
       </entry>
-      <entry key="app">
+      <entry key="All Tests (1)">
         <State />
       </entry>
-      <entry key="register_with_valid_credentials_should_update_state()">
+      <entry key="Tests in 'com.howest.skyeye.test'">
+        <State />
+      </entry>
+      <entry key="UserDaoTest">
+        <State />
+      </entry>
+      <entry key="UserViewModelTest">
+        <State />
+      </entry>
+      <entry key="app">
         <State />
       </entry>
     </value>
