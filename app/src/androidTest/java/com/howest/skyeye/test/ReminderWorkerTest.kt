@@ -1,4 +1,4 @@
-package com.howest.skyeye.workers
+package com.howest.skyeye.test
 
 import android.app.NotificationManager
 import android.content.Context
@@ -6,6 +6,7 @@ import androidx.core.app.NotificationCompat
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.work.testing.TestWorkerBuilder
+import com.howest.skyeye.workers.ReminderWorker
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
