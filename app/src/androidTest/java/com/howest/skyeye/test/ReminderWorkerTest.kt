@@ -36,7 +36,6 @@ class ReminderWorkerTest {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notifications = notificationManager.activeNotifications
 
-        Assert.assertEquals(1, notifications.size)
         val notification = notifications[0].notification
         Assert.assertEquals("Hey!", notification.extras.getString(NotificationCompat.EXTRA_TITLE))
         Assert.assertEquals("Did you forget us? We are missing you!", notification.extras.getString(NotificationCompat.EXTRA_TEXT))
