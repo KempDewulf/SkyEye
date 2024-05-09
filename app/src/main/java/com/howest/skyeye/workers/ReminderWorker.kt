@@ -46,7 +46,8 @@ class ReminderWorker(appContext: Context, workerParams: WorkerParameters) :
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
-        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setSmallIcon(R.drawable.logo_skyeye)

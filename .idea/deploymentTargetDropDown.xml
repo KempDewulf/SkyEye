@@ -2,22 +2,16 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="All Tests">
-        <State />
-      </entry>
-      <entry key="All Tests (1)">
-        <State />
-      </entry>
-      <entry key="Tests in 'com.howest.skyeye.test'">
-        <State />
-      </entry>
-      <entry key="UserDaoTest">
-        <State />
-      </entry>
-      <entry key="UserViewModelTest">
+      <entry key="ReminderWorkerTest">
         <State />
       </entry>
       <entry key="app">
+        <State />
+      </entry>
+      <entry key="skyEyeNavHost_clickMapTypeIconBottomBar_showsMapTypeModal()">
+        <State />
+      </entry>
+      <entry key="testNotificationSent()">
         <State />
       </entry>
     </value>
