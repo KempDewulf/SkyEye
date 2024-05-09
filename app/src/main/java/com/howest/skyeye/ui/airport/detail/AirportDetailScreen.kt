@@ -74,7 +74,7 @@ fun AirportDetailScreen(icao: String, airportName: String, navigateTo: (route: S
                 "Continent" to airportData.continent,
                 "Municipality" to airportData.municipality,
                 "Location" to airportData.country.name,
-                "Runway Count" to airportData.runways.size,
+                "Runway Count" to (airportData.runways?.size ?: 0),
                 "Elevation" to airportData.elevation_ft,
                 "Coordinates" to "${airportData.latitude_deg} ${airportData.longitude_deg}"
             )
