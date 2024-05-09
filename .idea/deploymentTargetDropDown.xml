@@ -5,19 +5,10 @@
       <entry key="All Tests">
         <State />
       </entry>
-      <entry key="SkyEyeScreenNavigationTest">
-        <State />
-      </entry>
       <entry key="app">
         <State />
       </entry>
-      <entry key="skyEyeNavHost_clickBackArrowInCameraScreen_opensHomeScreen()">
-        <State />
-      </entry>
-      <entry key="skyEyeNavHost_clickCloseButtonInCameraScreen_opensHomeScreen()">
-        <State />
-      </entry>
-      <entry key="skyEyeNavHost_clickCloseButtonInLoginScreen_opensHomeScreen()">
+      <entry key="register_with_valid_credentials_should_update_state()">
         <State />
       </entry>
     </value>
