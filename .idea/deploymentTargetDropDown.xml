@@ -2,16 +2,19 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="FilterViewModelTest">
+        <State />
+      </entry>
       <entry key="ReminderWorkerTest">
         <State />
       </entry>
       <entry key="app">
         <State />
       </entry>
-      <entry key="skyEyeNavHost_clickMapTypeIconBottomBar_showsMapTypeModal()">
+      <entry key="testNotificationSent()">
         <State />
       </entry>
-      <entry key="testNotificationSent()">
+      <entry key="testSetFilterItem()">
         <State />
       </entry>
     </value>
