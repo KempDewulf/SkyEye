@@ -5,20 +5,30 @@
       <entry key="All Tests">
         <State />
       </entry>
-      <entry key="FilterViewModelTest">
+      <entry key="All Tests (1)">
         <State />
       </entry>
-      <entry key="MapTypeModelTest">
+      <entry key="ReminderWorkerTest">
+        <State />
+      </entry>
+      <entry key="ThemeViewModelTest">
         <State />
       </entry>
       <entry key="app">
-        <State />
-      </entry>
-      <entry key="testNotificationSent()">
-        <State />
-      </entry>
-      <entry key="testSetFilterItem()">
-        <State />
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\user\.android\avd\Copy_of_Medium_Phone_API_34.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-05-09T16:14:39.184130300Z" />
+        </State>
       </entry>
     </value>
   </component>

@@ -1,19 +1,14 @@
 package com.howest.skyeye.test
 
-import android.app.NotificationManager
 import android.content.Context
-import androidx.core.app.NotificationCompat
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.work.testing.TestWorkerBuilder
 import com.howest.skyeye.workers.ReminderWorker
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.time.delay
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.time.Duration
 
 @RunWith(AndroidJUnit4::class)
 class ReminderWorkerTest {

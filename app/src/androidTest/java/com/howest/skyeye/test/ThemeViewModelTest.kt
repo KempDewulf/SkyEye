@@ -40,7 +40,7 @@ class ThemeViewModelTest {
 
     @Test
     fun testToggleDarkMode() = runTest {
-        val currentUiState = themeViewModel.themeUiState.value
+        val currentUiState = themeViewModel.themeUiState.value.copy()
 
         themeViewModel.toggleDarkMode()
 
